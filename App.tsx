@@ -1,20 +1,18 @@
+/**
+ * App Principal
+ * Configuração inicial do aplicativo com Provider de Autenticação
+ */
+
+import React from 'react';
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import { AuthProvider } from './src/contexts/AuthContext';
+import Routes from './src/navigation';
 
 export default function App() {
   return (
-    <View style={styles.container}>
-      <Text>Hello, Worlddcdfvgbh!</Text>
+    <AuthProvider>
       <StatusBar style="auto" />
-    </View>
+      <Routes />
+    </AuthProvider>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
