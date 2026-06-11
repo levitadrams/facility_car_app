@@ -12,6 +12,9 @@ import {
 } from 'react-native';
 import { useAuth } from '../../contexts/AuthContext';
 import Button from '../../components/Button';
+import Card from '../../components/Card';
+import Avatar from '../../components/Avatar';
+import theme from '../../theme';
 
 export default function DashboardScreen() {
   const { user, signOut } = useAuth();
@@ -55,14 +58,20 @@ export default function DashboardScreen() {
           <Text style={styles.welcome}>Bem-vindo(a)!</Text>
         </View>
 
-        {/* User Info */}
-        <View style={styles.userInfo}>
-          <Text style={styles.label}>Nome:</Text>
-          <Text style={styles.value}>{user?.name}</Text>
-
-          <Text style={[styles.label, styles.labelSpacing]}>Email:</Text>
-          <Text style={styles.value}>{user?.email}</Text>
-        </View>
+        {/* User Info Card */}
+        <Card variant="elevated" style={styles.userCard}>
+          <View style={styles.userHeader}>
+            <Avatar 
+              name={user?.name} 
+              size="lg"
+              backgroundColor={theme.colors.primary[600]}
+            />
+            <View style={styles.userTextContainer}>
+              <Text style={styles.userName}>{user?.name}</Text>
+              <Text style={styles.userEmail}>{user?.email}</Text>
+            </View>
+          </View>
+        </Card>
 
         {/* Actions */}
         <View style={styles.actions}>
@@ -80,54 +89,47 @@ export default function DashboardScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F5F5F5',
+    backgroundColor: theme.colors.background.secondary,
   },
   content: {
     flex: 1,
-    paddingHorizontal: 24,
-    paddingTop: 60,
-    paddingBottom: 24,
+    paddingHorizontal: theme.layout.containerPadding,
+    paddingTop: theme.spacing.xxxl,
+    paddingBottom: theme.layout.containerPadding,
   },
   header: {
-    marginBottom: 32,
+    marginBottom: theme.spacing.xl,
   },
   title: {
-    fontSize: 32,
-    fontWeight: 'bold',
-    color: '#333',
-    marginBottom: 8,
+    fontSize: theme.typography.fontSize.xxxl,
+    fontWeight: theme.typography.fontWeight.bold,
+    color: theme.colors.text.primary,
+    marginBottom: theme.spacing.xs,
   },
   welcome: {
-    fontSize: 18,
-    color: '#666',
+    fontSize: theme.typography.fontSize.lg,
+    color: theme.colors.text.secondary,
   },
-  userInfo: {
-    backgroundColor: '#FFF',
-    borderRadius: 12,
-    padding: 20,
-    marginBottom: 24,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.1,
-    shadowRadius: 3,
-    elevation: 3,
+  userCard: {
+    marginBottom: theme.spacing.lg,
   },
-  label: {
-    fontSize: 14,
-    color: '#999',
-    fontWeight: '500',
+  userHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
   },
-  labelSpacing: {
-    marginTop: 16,
+  userTextContainer: {
+    marginLeft: theme.spacing.md,
+    flex: 1,
   },
-  value: {
-    fontSize: 16,
-    color: '#333',
-    marginTop: 4,
-    fontWeight: '500',
+  userName: {
+    fontSize: theme.typography.fontSize.lg,
+    fontWeight: theme.typography.fontWeight.semibold,
+    color: theme.colors.text.primary,
+    marginBottom: theme.spacing.xxs,
+  },
+  userEmail: {
+    fontSize: theme.typography.fontSize.sm,
+    color: theme.colors.text.secondary,
   },
   actions: {
     marginTop: 'auto',

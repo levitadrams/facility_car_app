@@ -1,6 +1,6 @@
 /**
  * Componente Button reutilizável
- * Botão customizado com suporte a loading
+ * Botão customizado com suporte a loading e tema
  */
 
 import React from 'react';
@@ -11,38 +11,46 @@ import {
   ActivityIndicator,
   TouchableOpacityProps,
 } from 'react-native';
+import theme from '../../theme';
+import { buttonVariants } from '../../theme/tokens';
 
 interface ButtonProps extends TouchableOpacityProps {
   title: string;
   loading?: boolean;
-  variant?: 'primary' | 'secondary' | 'outline';
+  variant?: 'primary' | 'secondary' | 'outline' | 'ghost' | 'danger';
+  size?: 'sm' | 'md' | 'lg';
 }
 
 export default function Button({
   title,
   loading = false,
   variant = 'primary',
+  size = 'md',
   disabled,
   style,
   ...rest
 }: ButtonProps) {
-  const getButtonStyle = () => {
-    switch (variant) {
-      case 'secondary':
-        return styles.buttonSecondary;
-      case 'outline':
-        return styles.buttonOutline;
+  const variantStyle = buttonVariants[variant];
+  
+  const getSizeStyle = () => {
+    switch (size) {
+      case 'sm':
+        return styles.buttonSm;
+      case 'lg':
+        return styles.buttonLg;
       default:
-        return styles.buttonPrimary;
+        return styles.buttonMd;
     }
   };
 
-  const getTextStyle = () => {
-    switch (variant) {
-      case 'outline':
-        return styles.textOutline;
+  const getTextSizeStyle = () => {
+    switch (size) {
+      case 'sm':
+        return styles.textSm;
+      case 'lg':
+        return styles.textLg;
       default:
-        return styles.textPrimary;
+        return styles.textMd;
     }
   };
 
@@ -50,18 +58,25 @@ export default function Button({
     <TouchableOpacity
       style={[
         styles.button,
-        getButtonStyle(),
+        getSizeStyle(),
+        {
+          backgroundColor: variantStyle.background,
+          borderColor: variantStyle.border,
+          borderWidth: variant === 'outline' ? 1 : 0,
+        },
         (disabled || loading) && styles.buttonDisabled,
         style,
       ]}
       disabled={disabled || loading}
-      activeOpacity={0.7}
+      activeOpacity={theme.opacity.hover}
       {...rest}
     >
       {loading ? (
-        <ActivityIndicator color={variant === 'outline' ? '#007AFF' : '#FFF'} />
+        <ActivityIndicator color={variantStyle.text} />
       ) : (
-        <Text style={[styles.text, getTextStyle()]}>{title}</Text>
+        <Text style={[styles.text, getTextSizeStyle(), { color: variantStyle.text }]}>
+          {title}
+        </Text>
       )}
     </TouchableOpacity>
   );
@@ -69,34 +84,35 @@ export default function Button({
 
 const styles = StyleSheet.create({
   button: {
-    height: 50,
-    borderRadius: 8,
+    borderRadius: theme.borderRadius.md,
     justifyContent: 'center',
     alignItems: 'center',
-    paddingHorizontal: 20,
+    paddingHorizontal: theme.spacing.lg,
   },
-  buttonPrimary: {
-    backgroundColor: '#007AFF',
+  buttonSm: {
+    height: 40,
+    paddingHorizontal: theme.spacing.md,
   },
-  buttonSecondary: {
-    backgroundColor: '#5856D6',
+  buttonMd: {
+    height: theme.layout.buttonHeight,
   },
-  buttonOutline: {
-    backgroundColor: 'transparent',
-    borderWidth: 1,
-    borderColor: '#007AFF',
+  buttonLg: {
+    height: 56,
+    paddingHorizontal: theme.spacing.xl,
   },
   buttonDisabled: {
-    opacity: 0.6,
+    opacity: theme.opacity.disabled,
   },
   text: {
-    fontSize: 16,
-    fontWeight: '600',
+    fontWeight: theme.typography.fontWeight.semibold,
   },
-  textPrimary: {
-    color: '#FFF',
+  textSm: {
+    fontSize: theme.typography.fontSize.sm,
   },
-  textOutline: {
-    color: '#007AFF',
+  textMd: {
+    fontSize: theme.typography.fontSize.md,
+  },
+  textLg: {
+    fontSize: theme.typography.fontSize.lg,
   },
 });

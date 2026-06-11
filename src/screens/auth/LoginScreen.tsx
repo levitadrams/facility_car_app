@@ -20,6 +20,7 @@ import { z } from 'zod';
 import { useAuth } from '../../contexts/AuthContext';
 import Input from '../../components/Input';
 import Button from '../../components/Button';
+import theme from '../../theme';
 
 /**
  * Schema de validação com Zod
@@ -153,43 +154,43 @@ export default function LoginScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F5F5F5',
+    backgroundColor: theme.colors.background.secondary,
   },
   scrollContent: {
     flexGrow: 1,
   },
   content: {
     flex: 1,
-    paddingHorizontal: 24,
-    paddingTop: 60,
-    paddingBottom: 24,
+    paddingHorizontal: theme.layout.containerPadding,
+    paddingTop: theme.spacing.xxxl,
+    paddingBottom: theme.layout.containerPadding,
   },
   header: {
-    marginBottom: 40,
+    marginBottom: theme.spacing.xxl,
   },
   title: {
-    fontSize: 32,
-    fontWeight: 'bold',
-    color: '#333',
-    marginBottom: 8,
+    fontSize: theme.typography.fontSize.xxxl,
+    fontWeight: theme.typography.fontWeight.bold,
+    color: theme.colors.text.primary,
+    marginBottom: theme.spacing.xs,
   },
   subtitle: {
-    fontSize: 16,
-    color: '#666',
+    fontSize: theme.typography.fontSize.md,
+    color: theme.colors.text.secondary,
   },
   form: {
-    marginBottom: 24,
+    marginBottom: theme.spacing.lg,
   },
   button: {
-    marginTop: 8,
+    marginTop: theme.spacing.sm,
   },
   linksContainer: {
     alignItems: 'center',
-    gap: 16,
+    gap: theme.spacing.md,
   },
   link: {
-    fontSize: 14,
-    color: '#007AFF',
-    fontWeight: '500',
+    fontSize: theme.typography.fontSize.sm,
+    color: theme.colors.primary[600],
+    fontWeight: theme.typography.fontWeight.medium,
   },
 });

@@ -1,9 +1,9 @@
 /**
  * Componente Input reutilizável
- * Campo de entrada customizado com suporte a erros e ícones
+ * Campo de entrada customizado com suporte a erros e tema
  */
 
-import React, { forwardRef } from 'react';
+import React, { forwardRef, useState } from 'react';
 import {
   TextInput,
   View,
@@ -11,29 +11,51 @@ import {
   StyleSheet,
   TextInputProps,
 } from 'react-native';
+import theme from '../../theme';
+import { inputStates } from '../../theme/tokens';
 
 interface InputProps extends TextInputProps {
   label?: string;
   error?: string;
+  helperText?: string;
   containerStyle?: any;
+  leftIcon?: React.ReactNode;
+  rightIcon?: React.ReactNode;
 }
 
 const Input = forwardRef<TextInput, InputProps>(
-  ({ label, error, containerStyle, style, ...rest }, ref) => {
+  ({ label, error, helperText, containerStyle, leftIcon, rightIcon, style, ...rest }, ref) => {
+    const [isFocused, setIsFocused] = useState(false);
+    
+    const getBorderColor = () => {
+      if (error) return inputStates.error.border;
+      if (isFocused) return inputStates.focused.border;
+      return inputStates.default.border;
+    };
+
     return (
       <View style={[styles.container, containerStyle]}>
         {label && <Text style={styles.label}>{label}</Text>}
-        <TextInput
-          ref={ref}
-          style={[
-            styles.input,
-            error && styles.inputError,
-            style,
-          ]}
-          placeholderTextColor="#999"
-          {...rest}
-        />
+        <View style={styles.inputWrapper}>
+          {leftIcon && <View style={styles.leftIconContainer}>{leftIcon}</View>}
+          <TextInput
+            ref={ref}
+            style={[
+              styles.input,
+              leftIcon && styles.inputWithLeftIcon,
+              rightIcon && styles.inputWithRightIcon,
+              { borderColor: getBorderColor() },
+              style,
+            ]}
+            placeholderTextColor={theme.colors.text.tertiary}
+            onFocus={() => setIsFocused(true)}
+            onBlur={() => setIsFocused(false)}
+            {...rest}
+          />
+          {rightIcon && <View style={styles.rightIconContainer}>{rightIcon}</View>}
+        </View>
         {error && <Text style={styles.errorText}>{error}</Text>}
+        {!error && helperText && <Text style={styles.helperText}>{helperText}</Text>}
       </View>
     );
   }
@@ -45,30 +67,53 @@ export default Input;
 
 const styles = StyleSheet.create({
   container: {
-    marginBottom: 16,
+    marginBottom: theme.spacing.md,
   },
   label: {
-    fontSize: 14,
-    fontWeight: '500',
-    color: '#333',
-    marginBottom: 8,
+    fontSize: theme.typography.fontSize.sm,
+    fontWeight: theme.typography.fontWeight.medium,
+    color: theme.colors.text.primary,
+    marginBottom: theme.spacing.xs,
+  },
+  inputWrapper: {
+    position: 'relative',
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   input: {
-    height: 50,
+    flex: 1,
+    height: theme.layout.inputHeight,
     borderWidth: 1,
-    borderColor: '#DDD',
-    borderRadius: 8,
-    paddingHorizontal: 16,
-    fontSize: 16,
-    color: '#333',
-    backgroundColor: '#FFF',
+    borderRadius: theme.borderRadius.md,
+    paddingHorizontal: theme.spacing.md,
+    fontSize: theme.typography.fontSize.md,
+    color: theme.colors.text.primary,
+    backgroundColor: theme.colors.white,
   },
-  inputError: {
-    borderColor: '#FF3B30',
+  inputWithLeftIcon: {
+    paddingLeft: 48,
+  },
+  inputWithRightIcon: {
+    paddingRight: 48,
+  },
+  leftIconContainer: {
+    position: 'absolute',
+    left: theme.spacing.md,
+    zIndex: 1,
+  },
+  rightIconContainer: {
+    position: 'absolute',
+    right: theme.spacing.md,
+    zIndex: 1,
   },
   errorText: {
-    fontSize: 12,
-    color: '#FF3B30',
-    marginTop: 4,
+    fontSize: theme.typography.fontSize.xs,
+    color: theme.colors.danger[600],
+    marginTop: theme.spacing.xs,
+  },
+  helperText: {
+    fontSize: theme.typography.fontSize.xs,
+    color: theme.colors.text.tertiary,
+    marginTop: theme.spacing.xs,
   },
 });

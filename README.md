@@ -1,203 +1,318 @@
-# Driver Control - Aplicativo Mobile
+# Facility Car App 🚗
 
-Aplicativo React Native com Expo para controle de manutenção para motoristas de aplicativo.
+Aplicativo mobile para controle de motoristas e veículos, desenvolvido com React Native e Expo.
 
-## 🚀 Tecnologias
+## 📱 Tecnologias
 
-- **React Native** - Framework para desenvolvimento mobile
-- **Expo** - Plataforma para desenvolvimento React Native
-- **TypeScript** - Tipagem estática
-- **React Navigation** - Navegação entre telas
-- **Axios** - Cliente HTTP
-- **React Hook Form** - Gerenciamento de formulários
-- **Zod** - Validação de schemas
-- **AsyncStorage** - Persistência local de dados
-- **Context API** - Gerenciamento de estado global
+- **React Native** 0.81.5
+- **Expo** ~54.0.34
+- **TypeScript** ~5.9.2
+- **React Navigation** 7.3.1
+- **Axios** 1.17.0
+- **React Hook Form** 7.78.0
+- **Zod** 4.4.3
+- **AsyncStorage** 2.1.4
+
+## 🎨 Sistema de Design
+
+O aplicativo possui um **sistema de design completo e profissional** com:
+
+- ✨ Paleta de cores consistente e moderna
+- 📏 Espaçamento padronizado (sistema de 4px)
+- ✍️ Tipografia escalável e responsiva
+- 🎯 Componentes reutilizáveis e customizáveis
+- 🔧 Tokens semânticos para fácil manutenção
+
+📖 **Veja a documentação completa em** [docs/design-system.md](docs/design-system.md)
 
 ## 📁 Estrutura do Projeto
 
 ```
-src/
-├── assets/              # Recursos estáticos (imagens, ícones)
-├── components/          # Componentes reutilizáveis
-│   ├── Button/         # Botão customizado
-│   ├── Input/          # Campo de entrada customizado
-│   └── Loading/        # Indicador de carregamento
-├── contexts/           # Contexts do React
-│   └── AuthContext.tsx # Gerenciamento de autenticação
-├── hooks/              # Hooks customizados
-├── navigation/         # Configuração de rotas
-│   ├── AuthRoutes.tsx  # Rotas públicas (não autenticadas)
-│   ├── AppRoutes.tsx   # Rotas privadas (autenticadas)
-│   └── index.tsx       # Navegação principal
-├── screens/            # Telas do aplicativo
-│   ├── auth/
-│   │   └── LoginScreen.tsx
-│   └── dashboard/
-│       └── DashboardScreen.tsx
-├── services/           # Serviços de API
-│   ├── api.ts          # Configuração do Axios
-│   └── authService.ts  # Serviços de autenticação
-├── storage/            # Persistência local
-│   └── authStorage.ts  # Armazenamento de autenticação
-├── types/              # Definições TypeScript
-│   ├── auth.ts         # Tipos de autenticação
-│   └── api.ts          # Tipos de API
-├── constants/          # Constantes da aplicação
-└── utils/              # Funções utilitárias
+facility_car_app/
+├── src/
+│   ├── components/          # Componentes reutilizáveis
+│   │   ├── Avatar/          # Avatar com iniciais ou imagem
+│   │   ├── Badge/           # Etiquetas de status
+│   │   ├── Button/          # Botão com variantes
+│   │   ├── Card/            # Container com estilos
+│   │   ├── Input/           # Campo de entrada
+│   │   └── Loading/         # Indicador de carregamento
+│   │
+│   ├── contexts/            # Contextos do React
+│   │   └── AuthContext.tsx  # Contexto de autenticação
+│   │
+│   ├── navigation/          # Navegação
+│   │   ├── AppRoutes.tsx    # Rotas autenticadas
+│   │   ├── AuthRoutes.tsx   # Rotas públicas
+│   │   └── index.tsx        # Navegador principal
+│   │
+│   ├── screens/             # Telas
+│   │   ├── auth/
+│   │   │   └── LoginScreen.tsx
+│   │   └── dashboard/
+│   │       └── DashboardScreen.tsx
+│   │
+│   ├── services/            # Serviços
+│   │   ├── api.ts           # Configuração do Axios
+│   │   └── authService.ts   # Serviços de autenticação
+│   │
+│   ├── storage/             # Armazenamento local
+│   │   └── authStorage.ts   # AsyncStorage para auth
+│   │
+│   ├── theme/               # Sistema de design
+│   │   ├── index.ts         # Tema principal
+│   │   └── tokens.ts        # Tokens semânticos
+│   │
+│   └── types/               # TypeScript types
+│       ├── api.ts           # Tipos da API
+│       └── auth.ts          # Tipos de autenticação
+│
+├── docs/                    # Documentação
+│   ├── autenticacao.md      # Doc de autenticação
+│   └── design-system.md     # Doc do sistema de design
+│
+├── App.tsx                  # Componente raiz
+├── app.json                 # Configuração Expo
+├── package.json             # Dependências
+└── tsconfig.json            # Configuração TypeScript
 ```
 
-## 🔧 Instalação
+## � Instalação
 
-### Pré-requisitos
+```bash
+# Instalar dependências
+npm install
 
-- Node.js 18+
-- npm ou yarn
-- Expo CLI
-- Expo Go (no celular) ou Emulador Android/iOS
+# Iniciar o Expo
+npm start
+```
 
-### Passos
+## 🔐 Autenticação
 
-1. **Instale as dependências:**
-   ```bash
-   npm install
-   ```
+O aplicativo possui autenticação completa integrada com Laravel Sanctum:
 
-2. **Configure o endereço da API:**
-   
-   Edite o arquivo `src/services/api.ts` e altere a constante `API_BASE_URL` para o endereço do seu servidor Laravel:
-   
-   ```typescript
-   const API_BASE_URL = 'http://SEU_IP:8000/api';
-   ```
-   
-   **Importante:** 
-   - Para Android no emulador: use `http://10.0.2.2:8000/api`
-   - Para iOS no simulador: use `http://localhost:8000/api`
-   - Para dispositivo físico: use o IP da sua máquina na rede local (ex: `http://192.168.1.100:8000/api`)
-
-3. **Inicie o servidor Laravel:**
-   ```bash
-   cd ../facility-car
-   php artisan serve --host=0.0.0.0
-   ```
-
-4. **Inicie o aplicativo:**
-   ```bash
-   npm start
-   ```
-
-5. **Execute no dispositivo:**
-   - Escaneie o QR code com o Expo Go (Android) ou Camera (iOS)
-   - Ou pressione `a` para Android ou `i` para iOS (com emulador)
-
-## 📱 Funcionalidades Implementadas
-
-### ✅ Dia 9 - Estrutura do Projeto
-- Criação completa da estrutura de pastas
-- Organização escalável e modular
-
-### ✅ Dia 10 - Serviço API
-- Configuração do Axios
-- Interceptors para autenticação (Bearer Token)
-- Tratamento global de erros
-- Serviços de autenticação (login, logout, me)
-
-### ✅ Dia 11 - Tela de Login
-- Interface moderna e responsiva
-- Validação com React Hook Form + Zod
-- Feedback visual de erros
-- Loading durante autenticação
-
-### ✅ Dia 12 - Integração Laravel
-- Integração completa com API Laravel
-- Tratamento de erros da API
-- Navegação automática após login
-- Dashboard funcional
-
-### ✅ Dia 13 - Persistência do Token
-- AsyncStorage implementado
-- Salvamento automático de token e usuário
-- Login automático ao abrir o app
-- Validação de token ao iniciar
-
-### ✅ Dia 14 - Logout
-- Logout com confirmação
-- Revogação de token na API
-- Limpeza completa da sessão local
-- Tratamento de erros (continua logout local mesmo se API falhar)
-
-## 🎯 Como Usar
-
-### Login
-1. Abra o aplicativo
-2. Digite email e senha
-3. Clique em "Entrar"
-4. Será redirecionado para o Dashboard
-
-### Logout
-1. No Dashboard, clique em "Sair"
-2. Confirme a ação
-3. Será redirecionado para a tela de Login
+- ✅ Login com email e senha
+- ✅ Validação de formulários com Zod
+- ✅ Persistência de sessão com AsyncStorage
+- ✅ Interceptors Axios para token Bearer
+- ✅ Logout com confirmação
+- ✅ Restauração automática de sessão
 
 ### Credenciais de Teste
-Use as credenciais criadas no backend Laravel via `/api/register`
 
-## 🏗️ Arquitetura
+```
+Email: teste@email.com
+Senha: 12345678
+```
 
-### Responsabilidade dos Diretórios
+## 🔌 Integração com Backend
 
-- **components/**: Componentes UI reutilizáveis (Button, Input, Loading)
-- **contexts/**: Gerenciamento de estado global com Context API
-- **hooks/**: Hooks customizados para lógica reutilizável
-- **navigation/**: Configuração de rotas e navegação
-- **screens/**: Telas completas do aplicativo
-- **services/**: Comunicação com APIs externas
-- **storage/**: Persistência local de dados
-- **types/**: Definições TypeScript para type safety
-- **constants/**: Valores constantes da aplicação
-- **utils/**: Funções utilitárias genéricas
+### Configuração da API
 
-### Fluxo de Autenticação
+O aplicativo se conecta a uma API Laravel em:
 
-1. **Abertura do App**: AuthContext verifica token no AsyncStorage
-2. **Token Válido**: Valida com API e redireciona para Dashboard
-3. **Token Inválido/Ausente**: Redireciona para Login
-4. **Login**: Envia credenciais → Recebe token → Salva no AsyncStorage → Redireciona para Dashboard
-5. **Logout**: Revoga token na API → Limpa AsyncStorage → Redireciona para Login
+```typescript
+// src/services/api.ts
+baseURL: 'http://192.168.0.190:8000/api'
+```
 
-## 🔐 Segurança
+### Endpoints Disponíveis
 
-- Tokens armazenados localmente com AsyncStorage
-- Interceptor adiciona token automaticamente em todas as requisições
-- Validação de token ao iniciar aplicativo
-- Limpeza completa de dados ao fazer logout
+- `POST /register` - Registrar novo usuário
+- `POST /login` - Fazer login
+- `GET /me` - Obter usuário autenticado
+- `POST /logout` - Fazer logout
+
+### Iniciando o Backend Laravel
+
+```bash
+cd d:\projetos_react\facility-car
+php artisan serve --host=0.0.0.0
+```
+
+## 🎨 Componentes Disponíveis
+
+### Button
+
+Botão com 5 variantes e 3 tamanhos:
+
+```tsx
+<Button 
+  title="Entrar" 
+  variant="primary"  // primary | secondary | outline | ghost | danger
+  size="md"          // sm | md | lg
+  loading={false}
+  onPress={() => {}}
+/>
+```
+
+### Input
+
+Campo de entrada com validação e ícones:
+
+```tsx
+<Input
+  label="Email"
+  placeholder="seu@email.com"
+  error="Email inválido"
+  helperText="Digite um email válido"
+  leftIcon={<Icon />}
+  rightIcon={<Icon />}
+/>
+```
+
+### Card
+
+Container com 3 variantes:
+
+```tsx
+<Card 
+  variant="elevated"  // default | elevated | outlined
+  padding={16}
+  onPress={() => {}}  // Opcional
+>
+  <Text>Conteúdo</Text>
+</Card>
+```
+
+### Avatar
+
+Avatar com iniciais ou imagem:
+
+```tsx
+<Avatar 
+  name="João Silva" 
+  size="lg"  // sm | md | lg | xl
+  backgroundColor={theme.colors.primary[600]}
+/>
+```
+
+### Badge
+
+Etiqueta de status:
+
+```tsx
+<Badge 
+  label="Ativo" 
+  variant="success"  // success | warning | error | info | neutral
+  size="md"          // sm | md | lg
+/>
+```
+
+### Loading
+
+Tela de carregamento:
+
+```tsx
+<Loading 
+  message="Carregando..." 
+  color={theme.colors.primary[600]} 
+/>
+```
+
+## 🎨 Usando o Tema
+
+### Importar o Tema
+
+```tsx
+import theme from './src/theme';
+```
+
+### Usar em Estilos
+
+```tsx
+const styles = StyleSheet.create({
+  container: {
+    padding: theme.spacing.lg,
+    backgroundColor: theme.colors.background.primary,
+  },
+  title: {
+    fontSize: theme.typography.fontSize.xl,
+    fontWeight: theme.typography.fontWeight.bold,
+    color: theme.colors.text.primary,
+  },
+});
+```
+
+## 📚 Documentação
+
+- [Autenticação](docs/autenticacao.md) - Implementação detalhada da autenticação
+- [Design System](docs/design-system.md) - Guia completo do sistema de design
+
+## 🔄 Fluxo de Autenticação
+
+1. Usuário abre o app
+2. App verifica se há token salvo no AsyncStorage
+3. Se houver token:
+   - Faz requisição para `/me` para validar o token
+   - Se válido, mostra tela autenticada (Dashboard)
+   - Se inválido, limpa token e mostra tela de login
+4. Se não houver token:
+   - Mostra tela de login
+5. Após login bem-sucedido:
+   - Salva token e dados do usuário no AsyncStorage
+   - Navega para Dashboard
+6. Logout:
+   - Chama endpoint `/logout`
+   - Remove token e dados do AsyncStorage
+   - Navega para tela de login
+
+## 🛠️ Scripts Disponíveis
+
+```bash
+# Iniciar Expo
+npm start
+
+# Iniciar no Android
+npm run android
+
+# Iniciar no iOS
+npm run ios
+
+# Iniciar na web
+npm run web
+
+# Limpar cache
+npm start -- --clear
+```
+
+## 📝 Convenções de Código
+
+- **TypeScript** para type safety
+- **Functional components** com hooks
+- **Named exports** para componentes
+- **JSDoc** para documentação
+- **Comentários** em português
+- **Props interface** para todos os componentes
+- **Theme tokens** em vez de valores hardcoded
 
 ## 🐛 Troubleshooting
 
 ### Erro de conexão com API
-- Verifique se o servidor Laravel está rodando
-- Confirme o endereço IP correto no `api.ts`
-- Certifique-se de que o dispositivo está na mesma rede (Wi-Fi)
 
-### Token inválido
-- Faça logout e login novamente
-- Limpe os dados do app (configurações do dispositivo)
+Verifique se:
+1. O servidor Laravel está rodando: `php artisan serve --host=0.0.0.0`
+2. A URL da API está correta em `src/services/api.ts`
+3. O dispositivo/emulador está na mesma rede
 
-### Erro de dependências
+### AsyncStorage não persiste
+
+Limpe o cache do Expo:
 ```bash
-npm install
-npx expo install --fix
+npm start -- --clear
 ```
 
-## 📝 Próximos Passos
+### Erro de validação Zod
 
-- [ ] Implementar tela de registro
-- [ ] Adicionar recuperação de senha
-- [ ] Implementar refresh token
-- [ ] Adicionar telas de manutenção de veículos
-- [ ] Implementar upload de fotos
-- [ ] Adicionar notificações push
+Verifique se os campos do formulário correspondem ao schema em `LoginScreen.tsx`
+
+## 📄 Licença
+
+Este projeto é privado e confidencial.
+
+## 👥 Autor
+
+Desenvolvido para controle de motoristas e veículos.
 
 ## 📄 Licença
 
