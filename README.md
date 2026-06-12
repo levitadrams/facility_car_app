@@ -42,6 +42,7 @@ facility_car_app/
 │   │   └── AuthContext.tsx  # Contexto de autenticação
 │   │
 │   ├── navigation/          # Navegação
+│   │   ├── TabNavigator.tsx # Bottom Tabs Navigator (4 tabs)
 │   │   ├── AppRoutes.tsx    # Rotas autenticadas
 │   │   ├── AuthRoutes.tsx   # Rotas públicas
 │   │   └── index.tsx        # Navegador principal
@@ -49,8 +50,14 @@ facility_car_app/
 │   ├── screens/             # Telas
 │   │   ├── auth/
 │   │   │   └── LoginScreen.tsx
-│   │   └── dashboard/
-│   │       └── DashboardScreen.tsx
+│   │   ├── menu/
+│   │   │   └── MenuScreen.tsx         # Tab 1: Menu principal
+│   │   ├── vehicles/
+│   │   │   └── VehiclesScreen.tsx     # Tab 2: Veículos
+│   │   ├── maintenance/
+│   │   │   └── MaintenanceScreen.tsx  # Tab 3: Manutenção
+│   │   └── settings/
+│   │       └── SettingsScreen.tsx     # Tab 4: Configurações
 │   │
 │   ├── services/            # Serviços
 │   │   ├── api.ts           # Configuração do Axios
@@ -69,13 +76,45 @@ facility_car_app/
 │
 ├── docs/                    # Documentação
 │   ├── autenticacao.md      # Doc de autenticação
-│   └── design-system.md     # Doc do sistema de design
+│   ├── design-system.md     # Doc do sistema de design
+│   └── bottom-tabs-navigator.md  # Doc do Bottom Tabs
 │
 ├── App.tsx                  # Componente raiz
 ├── app.json                 # Configuração Expo
 ├── package.json             # Dependências
 └── tsconfig.json            # Configuração TypeScript
 ```
+
+## 🧭 Navegação
+
+O aplicativo utiliza **Bottom Tab Navigator** com 4 tabs principais:
+
+### 🏠 Tab 1: Menu
+- Menu principal com 4 opções
+- Header com avatar e saudação
+- Cards de acesso rápido (Veículos, Manutenção, Relatórios, Notificações)
+
+### 🚗 Tab 2: Veículos
+- Lista de veículos cadastrados
+- Painel de resumo (Total, Ativos, Manutenção)
+- Status com badges coloridos
+- Botão para adicionar veículo
+
+### 🔧 Tab 3: Manutenção
+- Lista de manutenções de veículos
+- Painel de resumo (Total, Pendentes, Custo Total)
+- Informações detalhadas (Tipo, Descrição, Data, Custo)
+- Status com badges (Pendente, Em Andamento, Concluída)
+- Botão para adicionar manutenção
+
+### ⚙️ Tab 4: Configurações
+- Perfil do usuário
+- Configurações de conta
+- Preferências do aplicativo
+- Suporte e informações
+- Logout
+
+📖 **Documentação completa:** [docs/bottom-tabs-navigator.md](docs/bottom-tabs-navigator.md)
 
 ## � Instalação
 
@@ -238,6 +277,7 @@ const styles = StyleSheet.create({
 
 - [Autenticação](docs/autenticacao.md) - Implementação detalhada da autenticação
 - [Design System](docs/design-system.md) - Guia completo do sistema de design
+- [Bottom Tabs Navigator](docs/bottom-tabs-navigator.md) - Navegação por tabs do app
 
 ## 🔄 Fluxo de Autenticação
 

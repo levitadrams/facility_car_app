@@ -5,10 +5,10 @@
 
 import React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import DashboardScreen from '../screens/dashboard/DashboardScreen';
+import TabNavigator from './TabNavigator';
 
 export type AppStackParamList = {
-  Dashboard: undefined;
+  Tabs: undefined;
 };
 
 const Stack = createNativeStackNavigator<AppStackParamList>();
@@ -20,7 +20,7 @@ export default function AppRoutes() {
         headerShown: false,
       }}
     >
-      <Stack.Screen name="Dashboard" component={DashboardScreen} />
+      <Stack.Screen name="Tabs" component={TabNavigator} />
     </Stack.Navigator>
   );
 }
