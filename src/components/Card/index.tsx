@@ -28,10 +28,11 @@ export default function Card({
   padding,
   style,
   onPress,
+  onLongPress,
   ...rest
 }: CardProps) {
   const variantStyle = cardStyles[variant];
-  
+
   const cardStyle = [
     styles.card,
     {
@@ -44,11 +45,12 @@ export default function Card({
     style,
   ];
 
-  if (onPress) {
+  if (onPress || onLongPress) {
     return (
       <TouchableOpacity
         style={cardStyle}
         onPress={onPress}
+        onLongPress={onLongPress}
         activeOpacity={theme.opacity.hover}
         {...rest}
       >

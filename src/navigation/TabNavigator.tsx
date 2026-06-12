@@ -13,11 +13,13 @@ import MenuScreen from '../screens/menu/MenuScreen';
 import VehiclesScreen from '../screens/vehicles/VehiclesScreen';
 import MaintenanceScreen from '../screens/maintenance/MaintenanceScreen';
 import SettingsScreen from '../screens/settings/SettingsScreen';
+import DestinationsStack from './DestinationsStack';
 
 export type TabParamList = {
   Menu: undefined;
   Vehicles: undefined;
   Maintenance: undefined;
+  Destinations: undefined;
   Settings: undefined;
 };
 
@@ -77,8 +79,19 @@ export default function TabNavigator() {
         }}
       />
       
-      <Tab.Screen 
-        name="Settings" 
+      <Tab.Screen
+        name="Destinations"
+        component={DestinationsStack}
+        options={{
+          tabBarLabel: 'Destinos',
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="map" size={size} color={color} />
+          ),
+        }}
+      />
+
+      <Tab.Screen
+        name="Settings"
         component={SettingsScreen}
         options={{
           tabBarLabel: 'Configurações',

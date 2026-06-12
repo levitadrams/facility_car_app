@@ -12,10 +12,13 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useAuth } from '../../contexts/AuthContext';
 import Card from '../../components/Card';
 import Avatar from '../../components/Avatar';
 import theme from '../../theme';
+import { TabParamList } from '../../navigation/TabNavigator';
 
 interface MenuItemProps {
   icon: keyof typeof Ionicons.glyphMap;
@@ -44,6 +47,7 @@ function MenuItem({ icon, title, subtitle, color, onPress }: MenuItemProps) {
 
 export default function MenuScreen() {
   const { user } = useAuth();
+  const navigation = useNavigation<NativeStackNavigationProp<TabParamList>>();
 
   const menuItems = [
     {
@@ -61,10 +65,17 @@ export default function MenuScreen() {
       onPress: () => console.log('Manutenção'),
     },
     {
+      icon: 'map-outline' as const,
+      title: 'RotasGo',
+      subtitle: 'Destinos e rotas otimizadas',
+      color: theme.colors.secondary[600],
+      onPress: () => navigation.navigate('Destinations'),
+    },
+    {
       icon: 'document-text-outline' as const,
       title: 'Relatórios',
       subtitle: 'Ver relatórios e estatísticas',
-      color: theme.colors.secondary[600],
+      color: theme.colors.info[600],
       onPress: () => console.log('Relatórios'),
     },
     {
@@ -132,7 +143,7 @@ const styles = StyleSheet.create({
   greeting: {
     fontSize: theme.typography.fontSize.md,
     color: theme.colors.text.secondary,
-    marginBottom: theme.spacing.xxs,
+    marginBottom: theme.spacing.xs,
   },
   userName: {
     fontSize: theme.typography.fontSize.xl,
@@ -170,7 +181,7 @@ const styles = StyleSheet.create({
     fontSize: theme.typography.fontSize.md,
     fontWeight: theme.typography.fontWeight.semibold,
     color: theme.colors.text.primary,
-    marginBottom: theme.spacing.xxs,
+    marginBottom: theme.spacing.xs,
   },
   menuSubtitle: {
     fontSize: theme.typography.fontSize.sm,
