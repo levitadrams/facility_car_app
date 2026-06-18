@@ -18,6 +18,8 @@ import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useAuth } from '../../contexts/AuthContext';
+import { useNavigation, NavigationProp } from '@react-navigation/native';
+import { AuthStackParamList } from '../../navigation/AuthRoutes';
 import Input from '../../components/Input';
 import Button from '../../components/Button';
 import theme from '../../theme';
@@ -27,11 +29,11 @@ import theme from '../../theme';
  */
 const loginSchema = z.object({
   email: z
-    .string({ required_error: 'Email é obrigatório' })
+    .string({ message: 'Email é obrigatório' })
     .email('Email inválido')
     .min(1, 'Email é obrigatório'),
   password: z
-    .string({ required_error: 'Senha é obrigatória' })
+    .string({ message: 'Senha é obrigatória' })
     .min(8, 'Senha deve ter no mínimo 8 caracteres'),
 });
 
@@ -39,6 +41,7 @@ type LoginFormData = z.infer<typeof loginSchema>;
 
 export default function LoginScreen() {
   const { signIn } = useAuth();
+  const navigation = useNavigation<NavigationProp<AuthStackParamList>>();
   const [loading, setLoading] = useState(false);
 
   const {
@@ -141,7 +144,10 @@ export default function LoginScreen() {
               <Text style={styles.link}>Esqueci minha senha</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity disabled={loading}>
+            <TouchableOpacity
+              disabled={loading}
+              onPress={() => navigation.navigate('Register')}
+            >
               <Text style={styles.link}>Criar conta</Text>
             </TouchableOpacity>
           </View>

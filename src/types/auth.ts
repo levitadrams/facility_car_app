@@ -6,6 +6,8 @@ export interface User {
   id: number;
   name: string;
   email: string;
+  phone?: string;
+  cpf?: string;
   email_verified_at?: string | null;
   created_at?: string;
   updated_at?: string;
@@ -19,6 +21,8 @@ export interface LoginCredentials {
 export interface RegisterData {
   name: string;
   email: string;
+  phone: string;
+  cpf: string;
   password: string;
   password_confirmation: string;
 }
@@ -33,5 +37,6 @@ export interface AuthContextData {
   token: string | null;
   loading: boolean;
   signIn: (credentials: LoginCredentials) => Promise<void>;
+  signUp: (data: RegisterData) => Promise<void>;
   signOut: () => Promise<void>;
 }

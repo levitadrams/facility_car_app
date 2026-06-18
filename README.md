@@ -165,7 +165,7 @@ baseURL: 'http://192.168.0.190:8000/api'
 ### Iniciando o Backend Laravel
 
 ```bash
-cd d:\projetos_react\facility-car
+cd d:\projetos_react\facility-car-api
 php artisan serve --host=0.0.0.0
 ```
 

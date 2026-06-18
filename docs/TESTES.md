@@ -50,7 +50,7 @@ POST http://SEU_IP:8000/api/register
 ## Opção 2: Via Tinker (Laravel)
 
 ```bash
-cd facility-car
+cd facility-car-api
 php artisan tinker
 ```
 
@@ -80,7 +80,7 @@ Senha: 12345678
 ### 1. Preparar Backend
 ```bash
 # Terminal 1 - Laravel
-cd facility-car
+cd facility-car-api
 php artisan serve --host=0.0.0.0
 ```
 
@@ -287,7 +287,7 @@ npm install -g react-native-debugger
 ### 2. Veja logs do Laravel
 ```bash
 # Terminal 3
-cd facility-car
+cd facility-car-api
 tail -f storage/logs/laravel.log
 ```
 

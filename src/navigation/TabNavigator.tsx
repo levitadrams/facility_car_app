@@ -8,9 +8,9 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons } from '@expo/vector-icons';
 import theme from '../theme';
 
-// Screens
+// Screens & Stacks
 import MenuScreen from '../screens/menu/MenuScreen';
-import VehiclesScreen from '../screens/vehicles/VehiclesScreen';
+import VehiclesStack from './VehiclesStack';
 import MaintenanceScreen from '../screens/maintenance/MaintenanceScreen';
 import SettingsScreen from '../screens/settings/SettingsScreen';
 import DestinationsStack from './DestinationsStack';
@@ -59,7 +59,7 @@ export default function TabNavigator() {
       
       <Tab.Screen 
         name="Vehicles" 
-        component={VehiclesScreen}
+        component={VehiclesStack}
         options={{
           tabBarLabel: 'Veículos',
           tabBarIcon: ({ color, size }) => (

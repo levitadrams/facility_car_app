@@ -192,7 +192,7 @@ const API_BASE_URL = 'http://SEU_IP:8000/api';
 
 ### 3. Iniciar Laravel
 ```bash
-cd ../facility-car
+cd ../facility-car-api
 php artisan serve --host=0.0.0.0
 ```
 

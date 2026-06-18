@@ -5,7 +5,7 @@
 
 import React, { createContext, useState, useEffect, useContext, ReactNode } from 'react';
 import { Alert } from 'react-native';
-import { AuthContextData, LoginCredentials, User } from '../types/auth';
+import { AuthContextData, LoginCredentials, RegisterData, User } from '../types/auth';
 import * as authService from '../services/authService';
 import * as authStorage from '../storage/authStorage';
 import { ApiError } from '../types/api';
@@ -73,15 +73,15 @@ export function AuthProvider({ children }: AuthProviderProps) {
   async function signIn(credentials: LoginCredentials): Promise<void> {
     try {
       const response = await authService.login(credentials);
-      
+
       setUser(response.user);
       setToken(response.token);
-      
+
       await authStorage.saveToken(response.token);
       await authStorage.saveUser(response.user);
     } catch (error) {
       const apiError = error as ApiError;
-      
+
       // Trata erros específicos
       if (apiError.status === 401) {
         throw new Error('Email ou senha incorretos');
@@ -92,8 +92,31 @@ export function AuthProvider({ children }: AuthProviderProps) {
         const firstError = Object.values(apiError.errors)[0];
         throw new Error(firstError?.[0] || 'Erro ao fazer login');
       }
-      
+
       throw new Error(apiError.message || 'Erro ao fazer login');
+    }
+  }
+
+  /**
+   * Realiza o registro de novo usuário
+   */
+  async function signUp(data: RegisterData): Promise<void> {
+    try {
+      await authService.register(data);
+      // Não faz login automático, apenas registra
+    } catch (error) {
+      const apiError = error as ApiError;
+
+      // Trata erros específicos
+      if (apiError.status === 422 && apiError.errors) {
+        // Erros de validação
+        const firstError = Object.values(apiError.errors)[0];
+        throw new Error(firstError?.[0] || 'Erro ao criar conta');
+      } else if (apiError.status === 0) {
+        throw new Error('Sem conexão com o servidor');
+      }
+
+      throw new Error(apiError.message || 'Erro ao criar conta');
     }
   }
 
@@ -122,6 +145,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
         token,
         loading,
         signIn,
+        signUp,
         signOut,
       }}
     >

@@ -1,6 +1,6 @@
 /**
  * Tela de Menu/Home
- * Primeira tab - Menu principal com opções
+ * Primeira tab - Menu principal com opções de navegação
  */
 
 import React from 'react';
@@ -9,7 +9,6 @@ import {
   Text,
   StyleSheet,
   ScrollView,
-  TouchableOpacity,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
@@ -55,7 +54,7 @@ export default function MenuScreen() {
       title: 'Meus Veículos',
       subtitle: 'Gerenciar veículos cadastrados',
       color: theme.colors.primary[600],
-      onPress: () => console.log('Veículos'),
+      onPress: () => navigation.navigate('Vehicles'),
     },
     {
       icon: 'construct-outline' as const,
@@ -96,8 +95,8 @@ export default function MenuScreen() {
             <Text style={styles.greeting}>Olá,</Text>
             <Text style={styles.userName}>{user?.name || 'Usuário'}</Text>
           </View>
-          <Avatar 
-            name={user?.name} 
+          <Avatar
+            name={user?.name}
             size="md"
             backgroundColor={theme.colors.primary[600]}
           />

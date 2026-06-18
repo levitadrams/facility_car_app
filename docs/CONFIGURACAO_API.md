@@ -79,7 +79,7 @@ Procure pelo IP que começa com `192.168.x.x` ou `10.0.x.x`
 
 ### Comando Correto
 ```bash
-cd facility-car
+cd facility-car-api
 php artisan serve --host=0.0.0.0
 ```
 
@@ -159,7 +159,7 @@ const API_BASE_URL = 'http://192.168.0.105:8000/api';
 
 **3. Iniciar Laravel:**
 ```bash
-cd facility-car
+cd facility-car-api
 php artisan serve --host=0.0.0.0
 # Laravel development server started: http://0.0.0.0:8000
 ```

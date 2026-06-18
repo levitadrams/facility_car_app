@@ -43,7 +43,16 @@ export interface OsrmRouteResponse {
   }>;
 }
 
+export interface RouteCalculation {
+  distance: number;
+  durationCalculated: number;  // Tempo teórico do OSRM (sem fator)
+  durationEstimated: number;   // Tempo estimado (com fator de tráfego)
+  trafficFactor: number;       // Fator aplicado (ex: 1.35)
+}
+
 export interface DestinationWithDistance extends RouteDestination {
   distance?: number;
   duration?: number;
+  durationCalculated?: number;  // Tempo calculado pelo OSRM
+  durationEstimated?: number;   // Tempo estimado com fator
 }

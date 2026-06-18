@@ -178,7 +178,7 @@ const API_BASE_URL = 'http://SEU_IP:8000/api';
 
 ### 3️⃣ Iniciar Laravel
 ```bash
-cd d:\projetos_react\facility-car
+cd d:\projetos_react\facility-car-api
 php artisan serve --host=0.0.0.0
 ```
 
@@ -198,7 +198,7 @@ npm start
 
 ### 1. Criar Usuário de Teste
 ```bash
-cd facility-car
+cd facility-car-api
 php artisan tinker
 ```
 ```php

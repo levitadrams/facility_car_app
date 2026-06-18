@@ -22,17 +22,19 @@ import Card from '../../components/Card';
 import Button from '../../components/Button';
 import Badge from '../../components/Badge';
 import theme from '../../theme';
-import { getDestinations, deleteDestination, calculateRoute } from '../../services/destinationService';
+import { getDestinations, deleteDestination, calculateRouteWithEstimate } from '../../services/destinationService';
 import { DestinationWithDistance, RouteDestination } from '../../types/destination';
 
 type NavigationProp = NativeStackNavigationProp<any>;
 
-function formatDistance(meters: number): string {
+function formatDistance(meters: number | undefined): string {
+  if (meters === undefined || meters === null) return '-';
   if (meters < 1000) return `${Math.round(meters)} m`;
   return `${(meters / 1000).toFixed(1)} km`;
 }
 
-function formatDuration(seconds: number): string {
+function formatDuration(seconds: number | undefined): string {
+  if (seconds === undefined || seconds === null) return '-';
   if (seconds < 60) return `${Math.round(seconds)} s`;
   const mins = Math.round(seconds / 60);
   if (mins < 60) return `${mins} min`;
@@ -77,21 +79,25 @@ export default function DestinationsListScreen() {
       const data = await getDestinations();
 
       if (loc && data.length > 0) {
-        // Consulta OSRM para cada destino
+        // Consulta OSRM para cada destino com estimativa de tempo
         const enriched: DestinationWithDistance[] = await Promise.all(
           data.map(async (dest: RouteDestination) => {
             try {
-              const route = await calculateRoute(
+              const route = await calculateRouteWithEstimate(
                 loc.latitude,
                 loc.longitude,
                 Number(dest.latitude),
                 Number(dest.longitude)
               );
-              if (route.code === 'Ok' && route.routes.length > 0) {
+              
+              if (route) {
                 return {
                   ...dest,
-                  distance: route.routes[0].distance,
-                  duration: route.routes[0].duration,
+                  distance: route.distance,
+                  durationCalculated: route.durationCalculated,
+                  durationEstimated: route.durationEstimated,
+                  // Mantém compatibilidade (duration = tempo estimado)
+                  duration: route.durationEstimated,
                 } as DestinationWithDistance;
               }
             } catch {
@@ -187,10 +193,28 @@ export default function DestinationsListScreen() {
               <Ionicons name="navigate-outline" size={16} color={theme.colors.primary[600]} />
               <Text style={styles.metricValue}>{formatDistance(item.distance)}</Text>
             </View>
-            <View style={styles.metricBox}>
-              <Ionicons name="time-outline" size={16} color={theme.colors.secondary[600]} />
-              <Text style={styles.metricValue}>{formatDuration(item.duration)}</Text>
-            </View>
+            
+            {item.durationCalculated !== undefined && item.durationEstimated !== undefined ? (
+              <>
+                <View style={styles.metricBox}>
+                  <Ionicons name="time-outline" size={16} color={theme.colors.gray[500]} />
+                  <Text style={styles.metricValueSecondary}>
+                    {formatDuration(item.durationCalculated)}
+                  </Text>
+                </View>
+                <View style={styles.metricBox}>
+                  <Ionicons name="time" size={16} color={theme.colors.secondary[600]} />
+                  <Text style={styles.metricValue}>
+                    {formatDuration(item.durationEstimated)}
+                  </Text>
+                </View>
+              </>
+            ) : (
+              <View style={styles.metricBox}>
+                <Ionicons name="time-outline" size={16} color={theme.colors.secondary[600]} />
+                <Text style={styles.metricValue}>{formatDuration(item.duration)}</Text>
+              </View>
+            )}
           </View>
         )}
       </Card>
@@ -377,6 +401,12 @@ const styles = StyleSheet.create({
     fontSize: theme.typography.fontSize.sm,
     fontWeight: theme.typography.fontWeight.medium,
     color: theme.colors.text.primary,
+  },
+  metricValueSecondary: {
+    fontSize: theme.typography.fontSize.sm,
+    fontWeight: theme.typography.fontWeight.regular,
+    color: theme.colors.text.tertiary,
+    textDecorationLine: 'line-through',
   },
   center: {
     flex: 1,
