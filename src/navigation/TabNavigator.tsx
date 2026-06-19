@@ -11,7 +11,7 @@ import { useTheme } from '../hooks/useTheme';
 // Screens & Stacks
 import MenuScreen from '../screens/menu/MenuScreen';
 import VehiclesStack from './VehiclesStack';
-import MaintenanceScreen from '../screens/maintenance/MaintenanceScreen';
+import MaintenancesStack from './MaintenancesStack';
 import SettingsScreen from '../screens/settings/SettingsScreen';
 import DestinationsStack from './DestinationsStack';
 
@@ -71,7 +71,7 @@ export default function TabNavigator() {
       
       <Tab.Screen 
         name="Maintenance" 
-        component={MaintenanceScreen}
+        component={MaintenancesStack}
         options={{
           tabBarLabel: 'Manutenção',
           tabBarIcon: ({ color, size }) => (
