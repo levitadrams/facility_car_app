@@ -21,7 +21,8 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import Input from '../../components/Input';
 import Button from '../../components/Button';
 import Card from '../../components/Card';
-import theme from '../../theme';
+import { useTheme } from '../../hooks/useTheme';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { searchPlaces, createDestination, updateDestination } from '../../services/destinationService';
 import { NominatimResult, RouteDestination } from '../../types/destination';
 import { AppStackParamList } from '../../navigation/AppRoutes';
@@ -38,9 +39,11 @@ const DEFAULT_REGION: Region = {
 
 export default function RouteDestinationFormScreen() {
   const navigation = useNavigation<NavigationProp>();
+  const insets = useSafeAreaInsets();
   const route = useRoute<RoutePropType>();
   const editing = route.params?.destination;
   const mapRef = useRef<MapView>(null);
+  const theme = useTheme();
 
   const [query, setQuery] = useState('');
   const [results, setResults] = useState<NominatimResult[]>([]);
@@ -162,12 +165,12 @@ export default function RouteDestinationFormScreen() {
   }, [selected, editing, markerCoord, notes, customName, navigation]);
 
   return (
-    <View style={styles.container}>
-      <View style={styles.header}>
+    <View style={[styles.container, { backgroundColor: theme.background, paddingTop: insets.top, paddingBottom: insets.bottom }]}>
+      <View style={[styles.header, { backgroundColor: theme.surface, borderBottomColor: theme.border }]}>
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
-          <Ionicons name="arrow-back" size={24} color={theme.colors.text.primary} />
+          <Ionicons name="arrow-back" size={24} color={theme.text} />
         </TouchableOpacity>
-        <Text style={styles.title}>{editing ? 'Editar Destino' : 'Novo Destino'}</Text>
+        <Text style={[styles.title, { color: theme.text }]}>{editing ? 'Editar Destino' : 'Novo Destino'}</Text>
         <View style={styles.backButton} />
       </View>
 
@@ -182,14 +185,14 @@ export default function RouteDestinationFormScreen() {
           placeholder="Ex: Igreja Batista Central, Aeroporto..."
           value={query}
           onChangeText={setQuery}
-          leftIcon={<Ionicons name="search" size={20} color={theme.colors.text.tertiary} />}
+          leftIcon={<Ionicons name="search" size={20} color={theme.textMuted} />}
           rightIcon={
             loadingSearch ? (
-              <ActivityIndicator size="small" color={theme.colors.primary[600]} />
+              <ActivityIndicator size="small" color={theme.primary} />
             ) : (
               query.length > 0 ? (
                 <TouchableOpacity onPress={() => { setQuery(''); setResults([]); }}>
-                  <Ionicons name="close-circle" size={22} color={theme.colors.text.tertiary} />
+                  <Ionicons name="close-circle" size={22} color={theme.textMuted} />
                 </TouchableOpacity>
               ) : null
             )
@@ -198,7 +201,7 @@ export default function RouteDestinationFormScreen() {
 
         {/* Results */}
         {results.length > 0 && (
-          <Card variant="outlined" style={styles.resultsCard}>
+          <Card variant="outlined" style={[styles.resultsCard, { backgroundColor: theme.surface, borderColor: theme.border }]}>
             <FlatList
               data={results}
               keyExtractor={(item) => String(item.place_id)}
@@ -208,19 +211,19 @@ export default function RouteDestinationFormScreen() {
                   style={styles.resultItem}
                   onPress={() => handleSelectResult(item)}
                 >
-                  <Ionicons name="location-outline" size={18} color={theme.colors.primary[600]} />
-                  <Text style={styles.resultText} numberOfLines={2}>
+                  <Ionicons name="location-outline" size={18} color={theme.primary} />
+                  <Text style={[styles.resultText, { color: theme.text }]} numberOfLines={2}>
                     {item.display_name}
                   </Text>
                 </TouchableOpacity>
               )}
-              ItemSeparatorComponent={() => <View style={styles.separator} />}
+              ItemSeparatorComponent={() => <View style={[styles.separator, { backgroundColor: theme.border }]} />}
             />
           </Card>
         )}
 
         {/* Map */}
-        <View style={styles.mapContainer}>
+        <View style={[styles.mapContainer, { backgroundColor: theme.borderLight }]}>
           <MapView
             ref={mapRef}
             style={styles.map}
@@ -232,7 +235,7 @@ export default function RouteDestinationFormScreen() {
                 coordinate={markerCoord}
                 draggable
                 onDragEnd={handleMarkerDragEnd}
-                pinColor={theme.colors.primary[600]}
+                pinColor={theme.primary}
               />
             )}
           </MapView>
@@ -256,18 +259,18 @@ export default function RouteDestinationFormScreen() {
         {/* Selected info */}
         {(selected || editing) && (
           <Card variant="default" style={styles.infoCard}>
-            <Text style={styles.infoLabel}>Endereço Completo</Text>
-            <Text style={styles.infoValue}>
+            <Text style={[styles.infoLabel, { color: theme.textMuted }]}>Endereço Completo</Text>
+            <Text style={[styles.infoValue, { color: theme.text }]}>
               {selected?.display_name || editing?.address || ''}
             </Text>
             <View style={styles.coordsRow}>
-              <View style={styles.coordBox}>
-                <Text style={styles.coordLabel}>Latitude</Text>
-                <Text style={styles.coordValue}>{markerCoord?.latitude.toFixed(6)}</Text>
+              <View style={[styles.coordBox, { backgroundColor: theme.surfaceHighlight }]}>
+                <Text style={[styles.coordLabel, { color: theme.textMuted }]}>Latitude</Text>
+                <Text style={[styles.coordValue, { color: theme.primary }]}>{markerCoord?.latitude.toFixed(6)}</Text>
               </View>
-              <View style={styles.coordBox}>
-                <Text style={styles.coordLabel}>Longitude</Text>
-                <Text style={styles.coordValue}>{markerCoord?.longitude.toFixed(6)}</Text>
+              <View style={[styles.coordBox, { backgroundColor: theme.surfaceHighlight }]}>
+                <Text style={[styles.coordLabel, { color: theme.textMuted }]}>Longitude</Text>
+                <Text style={[styles.coordValue, { color: theme.primary }]}>{markerCoord?.longitude.toFixed(6)}</Text>
               </View>
             </View>
           </Card>
@@ -299,18 +302,15 @@ export default function RouteDestinationFormScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: theme.colors.background.secondary,
   },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    backgroundColor: theme.colors.white,
-    paddingHorizontal: theme.layout.containerPadding,
-    paddingTop: theme.spacing.xl,
-    paddingBottom: theme.spacing.md,
+    paddingHorizontal: 24,
+    paddingTop: 32,
+    paddingBottom: 16,
     borderBottomWidth: 1,
-    borderBottomColor: theme.colors.border.light,
   },
   backButton: {
     width: 40,
@@ -319,42 +319,38 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   title: {
-    fontSize: theme.typography.fontSize.lg,
-    fontWeight: theme.typography.fontWeight.bold,
-    color: theme.colors.text.primary,
+    fontSize: 18,
+    fontWeight: '700',
   },
   scroll: {
     flex: 1,
   },
   scrollContent: {
-    padding: theme.layout.containerPadding,
-    paddingBottom: theme.spacing.xxl,
+    padding: 24,
+    paddingBottom: 64,
   },
   resultsCard: {
-    marginBottom: theme.spacing.md,
+    marginBottom: 16,
     maxHeight: 220,
   },
   resultItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: theme.spacing.sm,
-    gap: theme.spacing.sm,
+    paddingVertical: 8,
+    gap: 8,
   },
   resultText: {
     flex: 1,
-    fontSize: theme.typography.fontSize.sm,
-    color: theme.colors.text.primary,
+    fontSize: 14,
   },
   separator: {
     height: 1,
-    backgroundColor: theme.colors.border.light,
   },
   mapContainer: {
     height: 280,
-    borderRadius: theme.borderRadius.lg,
+    borderRadius: 12,
     overflow: 'hidden',
-    marginBottom: theme.spacing.md,
-    backgroundColor: theme.colors.gray[200],
+    marginBottom: 16,
   },
   map: {
     ...StyleSheet.absoluteFillObject,
@@ -366,53 +362,48 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0,0,0,0.3)',
   },
   mapOverlayText: {
-    color: theme.colors.white,
-    fontSize: theme.typography.fontSize.md,
-    fontWeight: theme.typography.fontWeight.medium,
+    color: '#FFFFFF',
+    fontSize: 16,
+    fontWeight: '500',
     textAlign: 'center',
-    paddingHorizontal: theme.spacing.xl,
+    paddingHorizontal: 32,
   },
   infoCard: {
-    marginBottom: theme.spacing.md,
+    marginBottom: 16,
   },
   infoLabel: {
-    fontSize: theme.typography.fontSize.xs,
-    fontWeight: theme.typography.fontWeight.medium,
-    color: theme.colors.text.tertiary,
+    fontSize: 12,
+    fontWeight: '500',
     textTransform: 'uppercase',
-    marginTop: theme.spacing.sm,
-    marginBottom: theme.spacing.xs,
+    marginTop: 8,
+    marginBottom: 4,
   },
   infoValue: {
-    fontSize: theme.typography.fontSize.md,
-    color: theme.colors.text.primary,
+    fontSize: 16,
   },
   coordsRow: {
     flexDirection: 'row',
-    gap: theme.spacing.md,
-    marginTop: theme.spacing.md,
+    gap: 16,
+    marginTop: 16,
   },
   coordBox: {
     flex: 1,
-    backgroundColor: theme.colors.background.secondary,
-    borderRadius: theme.borderRadius.md,
-    padding: theme.spacing.md,
+    borderRadius: 8,
+    padding: 16,
   },
   coordLabel: {
-    fontSize: theme.typography.fontSize.xs,
-    color: theme.colors.text.tertiary,
-    marginBottom: theme.spacing.xs,
+    fontSize: 12,
+    marginBottom: 4,
   },
   coordValue: {
-    fontSize: theme.typography.fontSize.md,
-    fontWeight: theme.typography.fontWeight.semibold,
-    color: theme.colors.primary[700],
+    fontSize: 16,
+    fontWeight: '600',
   },
   notesInput: {
     height: 80,
     textAlignVertical: 'top',
   },
   saveButton: {
-    marginTop: theme.spacing.md,
+    marginTop: 16,
   },
 });

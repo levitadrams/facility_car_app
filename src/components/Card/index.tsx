@@ -11,14 +11,13 @@ import {
   TouchableOpacity,
   TouchableOpacityProps,
 } from 'react-native';
-import theme from '../../theme';
-import { cardStyles } from '../../theme/tokens';
+import { useTheme } from '../../hooks/useTheme';
 
 interface CardProps extends TouchableOpacityProps {
   children: React.ReactNode;
   variant?: 'default' | 'elevated' | 'outlined';
   padding?: number;
-  style?: ViewStyle;
+  style?: ViewStyle | ViewStyle[];
   onPress?: () => void;
 }
 
@@ -31,7 +30,20 @@ export default function Card({
   onLongPress,
   ...rest
 }: CardProps) {
-  const variantStyle = cardStyles[variant];
+  const theme = useTheme();
+
+  const getVariantStyle = () => {
+    switch (variant) {
+      case 'outlined':
+        return { background: theme.cardBg, border: theme.border, shadow: styles.shadowNone };
+      case 'elevated':
+        return { background: theme.cardBg, border: 'transparent', shadow: styles.shadowLg };
+      default:
+        return { background: theme.cardBg, border: theme.border, shadow: styles.shadowMd };
+    }
+  };
+
+  const variantStyle = getVariantStyle();
 
   const cardStyle = [
     styles.card,
@@ -39,7 +51,7 @@ export default function Card({
       backgroundColor: variantStyle.background,
       borderColor: variantStyle.border,
       borderWidth: variant === 'outlined' ? 1 : 0,
-      padding: padding !== undefined ? padding : theme.layout.cardPadding,
+      padding: padding !== undefined ? padding : 16,
     },
     variantStyle.shadow,
     style,
@@ -51,7 +63,7 @@ export default function Card({
         style={cardStyle}
         onPress={onPress}
         onLongPress={onLongPress}
-        activeOpacity={theme.opacity.hover}
+        activeOpacity={0.8}
         {...rest}
       >
         {children}
@@ -64,6 +76,27 @@ export default function Card({
 
 const styles = StyleSheet.create({
   card: {
-    borderRadius: theme.borderRadius.lg,
+    borderRadius: 12,
+  },
+  shadowNone: {
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0,
+    shadowRadius: 0,
+    elevation: 0,
+  },
+  shadowMd: {
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 2,
+  },
+  shadowLg: {
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.15,
+    shadowRadius: 8,
+    elevation: 4,
   },
 });

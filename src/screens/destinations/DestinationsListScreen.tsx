@@ -21,30 +21,17 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import Card from '../../components/Card';
 import Button from '../../components/Button';
 import Badge from '../../components/Badge';
-import theme from '../../theme';
+import { useTheme } from '../../hooks/useTheme';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { getDestinations, deleteDestination, calculateRouteWithEstimate } from '../../services/destinationService';
 import { DestinationWithDistance, RouteDestination } from '../../types/destination';
 
 type NavigationProp = NativeStackNavigationProp<any>;
 
-function formatDistance(meters: number | undefined): string {
-  if (meters === undefined || meters === null) return '-';
-  if (meters < 1000) return `${Math.round(meters)} m`;
-  return `${(meters / 1000).toFixed(1)} km`;
-}
-
-function formatDuration(seconds: number | undefined): string {
-  if (seconds === undefined || seconds === null) return '-';
-  if (seconds < 60) return `${Math.round(seconds)} s`;
-  const mins = Math.round(seconds / 60);
-  if (mins < 60) return `${mins} min`;
-  const hours = Math.floor(mins / 60);
-  const remainingMins = mins % 60;
-  return `${hours}h ${remainingMins}min`;
-}
-
 export default function DestinationsListScreen() {
   const navigation = useNavigation<NavigationProp>();
+  const theme = useTheme();
+  const insets = useSafeAreaInsets();
   const [destinations, setDestinations] = useState<DestinationWithDistance[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -174,45 +161,45 @@ export default function DestinationsListScreen() {
         <View style={styles.cardHeader}>
           <View style={styles.cardInfo}>
             <View style={styles.nameRow}>
-              <Ionicons name="location" size={20} color={theme.colors.primary[600]} />
-              <Text style={styles.cardTitle}>{item.name}</Text>
+              <Ionicons name="location" size={20} color={theme.primary} />
+              <Text style={[styles.cardTitle, { color: theme.text }]}>{item.name}</Text>
             </View>
           </View>
           <TouchableOpacity
             onPress={() => handleEdit(item)}
-            style={styles.editButton}
+            style={[styles.editButton, { backgroundColor: theme.primaryLight }]}
             activeOpacity={0.7}
           >
-            <Ionicons name="create-outline" size={22} color={theme.colors.primary[600]} />
+            <Ionicons name="create-outline" size={22} color={theme.primary} />
           </TouchableOpacity>
         </View>
 
         {item.distance !== undefined && item.duration !== undefined && (
-          <View style={styles.cardFooter}>
+          <View style={[styles.cardFooter, { borderTopColor: theme.border }]}>
             <View style={styles.metricBox}>
-              <Ionicons name="navigate-outline" size={16} color={theme.colors.primary[600]} />
-              <Text style={styles.metricValue}>{formatDistance(item.distance)}</Text>
+              <Ionicons name="navigate-outline" size={16} color={theme.primary} />
+              <Text style={[styles.metricValue, { color: theme.text }]}>{formatDistance(item.distance)}</Text>
             </View>
-            
+
             {item.durationCalculated !== undefined && item.durationEstimated !== undefined ? (
               <>
                 <View style={styles.metricBox}>
-                  <Ionicons name="time-outline" size={16} color={theme.colors.gray[500]} />
-                  <Text style={styles.metricValueSecondary}>
+                  <Ionicons name="time-outline" size={16} color={theme.textMuted} />
+                  <Text style={[styles.metricValueSecondary, { color: theme.textMuted }]}>
                     {formatDuration(item.durationCalculated)}
                   </Text>
                 </View>
                 <View style={styles.metricBox}>
-                  <Ionicons name="time" size={16} color={theme.colors.secondary[600]} />
-                  <Text style={styles.metricValue}>
+                  <Ionicons name="time" size={16} color={theme.secondary} />
+                  <Text style={[styles.metricValue, { color: theme.text }]}>
                     {formatDuration(item.durationEstimated)}
                   </Text>
                 </View>
               </>
             ) : (
               <View style={styles.metricBox}>
-                <Ionicons name="time-outline" size={16} color={theme.colors.secondary[600]} />
-                <Text style={styles.metricValue}>{formatDuration(item.duration)}</Text>
+                <Ionicons name="time-outline" size={16} color={theme.secondary} />
+                <Text style={[styles.metricValue, { color: theme.text }]}>{formatDuration(item.duration)}</Text>
               </View>
             )}
           </View>
@@ -223,29 +210,29 @@ export default function DestinationsListScreen() {
   );
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: theme.background }]}>
       {/* Header */}
-      <View style={styles.header}>
+      <View style={[styles.header, { backgroundColor: theme.surface, borderBottomColor: theme.border }]}>
         <View style={styles.headerRow}>
-          <Text style={styles.title}>Rotas Inteligentes</Text>
+          <Text style={[styles.title, { color: theme.text }]}>Rotas Inteligentes</Text>
           <TouchableOpacity
             onPress={handleRefresh}
-            style={styles.refreshButton}
+            style={[styles.refreshButton, { backgroundColor: theme.primary }]}
             activeOpacity={0.7}
           >
-            <Ionicons name="refresh" size={24} color={theme.colors.white} />
+            <Ionicons name="refresh" size={24} color={theme.textInverse} />
           </TouchableOpacity>
         </View>
 
         {userLocation && (
-          <Text style={styles.subtitle}>
+          <Text style={[styles.subtitle, { color: theme.textMuted }]}>
             Sua localização: {userLocation.latitude.toFixed(4)}, {userLocation.longitude.toFixed(4)}
           </Text>
         )}
         {locationError && (
-          <View style={styles.errorBox}>
-            <Ionicons name="warning-outline" size={16} color={theme.colors.danger[500]} />
-            <Text style={styles.errorText}>{locationError}</Text>
+          <View style={[styles.errorBox, { backgroundColor: theme.dangerLight }]}>
+            <Ionicons name="warning-outline" size={16} color={theme.danger} />
+            <Text style={[styles.errorText, { color: theme.danger }]}>{locationError}</Text>
           </View>
         )}
       </View>
@@ -253,8 +240,8 @@ export default function DestinationsListScreen() {
       {/* Content */}
       {loading && !refreshing ? (
         <View style={styles.center}>
-          <ActivityIndicator size="large" color={theme.colors.primary[600]} />
-          <Text style={styles.loadingText}>Calculando rotas...</Text>
+          <ActivityIndicator size="large" color={theme.primary} />
+          <Text style={[styles.loadingText, { color: theme.textMuted }]}>Calculando rotas...</Text>
         </View>
       ) : (
         <FlatList
@@ -267,9 +254,9 @@ export default function DestinationsListScreen() {
           }
           ListEmptyComponent={
             <View style={styles.emptyState}>
-              <Ionicons name="map-outline" size={48} color={theme.colors.text.tertiary} />
-              <Text style={styles.emptyTitle}>Nenhum destino cadastrado</Text>
-              <Text style={styles.emptySubtitle}>
+              <Ionicons name="map-outline" size={48} color={theme.textMuted} />
+              <Text style={[styles.emptyTitle, { color: theme.text }]}>Nenhum destino cadastrado</Text>
+              <Text style={[styles.emptySubtitle, { color: theme.textMuted }]}>
                 Adicione destinos para visualizar as rotas otimizadas
               </Text>
             </View>
@@ -279,11 +266,11 @@ export default function DestinationsListScreen() {
 
       {/* FAB */}
       <TouchableOpacity
-        style={styles.fab}
+        style={[styles.fab, { backgroundColor: theme.fab }]}
         onPress={() => navigation.navigate('RouteDestinationForm')}
         activeOpacity={0.8}
       >
-        <Ionicons name="add" size={28} color={theme.colors.white} />
+        <Ionicons name="add" size={28} color={theme.textInverse} />
       </TouchableOpacity>
     </View>
   );
@@ -292,15 +279,12 @@ export default function DestinationsListScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: theme.colors.background.secondary,
   },
   header: {
-    backgroundColor: theme.colors.white,
-    paddingHorizontal: theme.layout.containerPadding,
-    paddingTop: theme.spacing.xl,
-    paddingBottom: theme.spacing.md,
+    paddingHorizontal: 24,
+    paddingTop: 32,
+    paddingBottom: 16,
     borderBottomWidth: 1,
-    borderBottomColor: theme.colors.border.light,
   },
   headerRow: {
     flexDirection: 'row',
@@ -311,7 +295,6 @@ const styles = StyleSheet.create({
     width: 48,
     height: 48,
     borderRadius: 24,
-    backgroundColor: theme.colors.primary[600],
     justifyContent: 'center',
     alignItems: 'center',
     elevation: 4,
@@ -327,32 +310,28 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   title: {
-    fontSize: theme.typography.fontSize.xxl,
-    fontWeight: theme.typography.fontWeight.bold,
-    color: theme.colors.text.primary,
+    fontSize: 24,
+    fontWeight: '700',
   },
   subtitle: {
-    fontSize: theme.typography.fontSize.xs,
-    color: theme.colors.text.tertiary,
-    marginTop: theme.spacing.xs,
+    fontSize: 12,
+    marginTop: 4,
   },
   errorBox: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: theme.spacing.xs,
-    marginTop: theme.spacing.sm,
-    backgroundColor: theme.colors.danger[50],
-    padding: theme.spacing.sm,
-    borderRadius: theme.borderRadius.md,
+    gap: 4,
+    marginTop: 8,
+    padding: 8,
+    borderRadius: 8,
   },
   errorText: {
-    fontSize: theme.typography.fontSize.sm,
-    color: theme.colors.danger[600],
+    fontSize: 14,
   },
   list: {
-    padding: theme.layout.containerPadding,
-    gap: theme.spacing.md,
-    paddingBottom: theme.spacing.xxl,
+    padding: 24,
+    gap: 16,
+    paddingBottom: 64,
   },
   card: {
     marginBottom: 0,
@@ -361,7 +340,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    gap: theme.spacing.md,
+    gap: 16,
   },
   cardInfo: {
     flex: 1,
@@ -369,43 +348,38 @@ const styles = StyleSheet.create({
   nameRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: theme.spacing.sm,
+    gap: 8,
   },
   cardTitle: {
-    fontSize: theme.typography.fontSize.lg,
-    fontWeight: theme.typography.fontWeight.bold,
-    color: theme.colors.text.primary,
+    fontSize: 18,
+    fontWeight: '700',
   },
   editButton: {
     width: 40,
     height: 40,
-    borderRadius: theme.borderRadius.md,
-    backgroundColor: theme.colors.primary[50],
+    borderRadius: 8,
     justifyContent: 'center',
     alignItems: 'center',
   },
   cardFooter: {
     flexDirection: 'row',
-    gap: theme.spacing.lg,
-    marginTop: theme.spacing.md,
-    paddingTop: theme.spacing.md,
+    gap: 24,
+    marginTop: 16,
+    paddingTop: 16,
     borderTopWidth: 1,
-    borderTopColor: theme.colors.border.light,
   },
   metricBox: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: theme.spacing.xs,
+    gap: 4,
   },
   metricValue: {
-    fontSize: theme.typography.fontSize.sm,
-    fontWeight: theme.typography.fontWeight.medium,
-    color: theme.colors.text.primary,
+    fontSize: 14,
+    fontWeight: '500',
   },
   metricValueSecondary: {
-    fontSize: theme.typography.fontSize.sm,
-    fontWeight: theme.typography.fontWeight.regular,
-    color: theme.colors.text.tertiary,
+    fontSize: 14,
+    fontWeight: '400',
     textDecorationLine: 'line-through',
   },
   center: {
@@ -414,34 +388,30 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   loadingText: {
-    marginTop: theme.spacing.md,
-    fontSize: theme.typography.fontSize.md,
-    color: theme.colors.text.secondary,
+    marginTop: 16,
+    fontSize: 16,
   },
   emptyState: {
     alignItems: 'center',
-    paddingTop: theme.spacing.xxxl,
+    paddingTop: 64,
   },
   emptyTitle: {
-    fontSize: theme.typography.fontSize.lg,
-    fontWeight: theme.typography.fontWeight.semibold,
-    color: theme.colors.text.primary,
-    marginTop: theme.spacing.md,
+    fontSize: 18,
+    fontWeight: '600',
+    marginTop: 16,
   },
   emptySubtitle: {
-    fontSize: theme.typography.fontSize.sm,
-    color: theme.colors.text.secondary,
-    marginTop: theme.spacing.xs,
+    fontSize: 14,
+    marginTop: 4,
     textAlign: 'center',
   },
   fab: {
     position: 'absolute',
-    right: theme.spacing.lg,
-    bottom: theme.spacing.lg,
+    right: 24,
+    bottom: 24,
     width: 56,
     height: 56,
     borderRadius: 28,
-    backgroundColor: theme.colors.primary[600],
     justifyContent: 'center',
     alignItems: 'center',
     elevation: 6,
@@ -451,3 +421,19 @@ const styles = StyleSheet.create({
     shadowRadius: 8,
   },
 });
+
+function formatDistance(meters: number | undefined): string {
+  if (meters === undefined || meters === null) return '-';
+  if (meters < 1000) return `${Math.round(meters)} m`;
+  return `${(meters / 1000).toFixed(1)} km`;
+}
+
+function formatDuration(seconds: number | undefined): string {
+  if (seconds === undefined || seconds === null) return '-';
+  if (seconds < 60) return `${Math.round(seconds)} s`;
+  const mins = Math.round(seconds / 60);
+  if (mins < 60) return `${mins} min`;
+  const hours = Math.floor(mins / 60);
+  const remainingMins = mins % 60;
+  return `${hours}h ${remainingMins}min`;
+}

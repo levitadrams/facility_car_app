@@ -6,7 +6,7 @@
 import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons } from '@expo/vector-icons';
-import theme from '../theme';
+import { useTheme } from '../hooks/useTheme';
 
 // Screens & Stacks
 import MenuScreen from '../screens/menu/MenuScreen';
@@ -26,23 +26,24 @@ export type TabParamList = {
 const Tab = createBottomTabNavigator<TabParamList>();
 
 export default function TabNavigator() {
+  const theme = useTheme();
   return (
     <Tab.Navigator
       screenOptions={{
         headerShown: false,
-        tabBarActiveTintColor: theme.colors.primary[600],
-        tabBarInactiveTintColor: theme.colors.text.tertiary,
+        tabBarActiveTintColor: theme.primary,
+        tabBarInactiveTintColor: theme.textMuted,
         tabBarStyle: {
-          height: theme.layout.tabBarHeight,
+          height: 64,
           paddingBottom: 8,
           paddingTop: 8,
           borderTopWidth: 1,
-          borderTopColor: theme.colors.border.light,
-          backgroundColor: theme.colors.white,
+          borderTopColor: theme.border,
+          backgroundColor: theme.surface,
         },
         tabBarLabelStyle: {
-          fontSize: theme.typography.fontSize.xs,
-          fontWeight: theme.typography.fontWeight.medium,
+          fontSize: 12,
+          fontWeight: '500',
         },
       }}
     >

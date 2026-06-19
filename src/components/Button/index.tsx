@@ -11,8 +11,7 @@ import {
   ActivityIndicator,
   TouchableOpacityProps,
 } from 'react-native';
-import theme from '../../theme';
-import { buttonVariants } from '../../theme/tokens';
+import { useTheme } from '../../hooks/useTheme';
 
 interface ButtonProps extends TouchableOpacityProps {
   title: string;
@@ -30,7 +29,26 @@ export default function Button({
   style,
   ...rest
 }: ButtonProps) {
-  const variantStyle = buttonVariants[variant];
+  const theme = useTheme();
+
+  const getVariantColors = () => {
+    switch (variant) {
+      case 'primary':
+        return { background: theme.primary, text: theme.textInverse, border: theme.primary };
+      case 'secondary':
+        return { background: theme.secondary, text: theme.textInverse, border: theme.secondary };
+      case 'outline':
+        return { background: 'transparent', text: theme.primary, border: theme.primary };
+      case 'ghost':
+        return { background: 'transparent', text: theme.primary, border: 'transparent' };
+      case 'danger':
+        return { background: theme.danger, text: theme.textInverse, border: theme.danger };
+      default:
+        return { background: theme.primary, text: theme.textInverse, border: theme.primary };
+    }
+  };
+
+  const variantStyle = getVariantColors();
   
   const getSizeStyle = () => {
     switch (size) {
@@ -68,7 +86,7 @@ export default function Button({
         style,
       ]}
       disabled={disabled || loading}
-      activeOpacity={theme.opacity.hover}
+      activeOpacity={0.8}
       {...rest}
     >
       {loading ? (
@@ -84,35 +102,35 @@ export default function Button({
 
 const styles = StyleSheet.create({
   button: {
-    borderRadius: theme.borderRadius.md,
+    borderRadius: 8,
     justifyContent: 'center',
     alignItems: 'center',
-    paddingHorizontal: theme.spacing.lg,
+    paddingHorizontal: 24,
   },
   buttonSm: {
     height: 40,
-    paddingHorizontal: theme.spacing.md,
+    paddingHorizontal: 16,
   },
   buttonMd: {
-    height: theme.layout.buttonHeight,
+    height: 50,
   },
   buttonLg: {
     height: 56,
-    paddingHorizontal: theme.spacing.xl,
+    paddingHorizontal: 32,
   },
   buttonDisabled: {
-    opacity: theme.opacity.disabled,
+    opacity: 0.4,
   },
   text: {
-    fontWeight: theme.typography.fontWeight.semibold,
+    fontWeight: '600',
   },
   textSm: {
-    fontSize: theme.typography.fontSize.sm,
+    fontSize: 14,
   },
   textMd: {
-    fontSize: theme.typography.fontSize.md,
+    fontSize: 16,
   },
   textLg: {
-    fontSize: theme.typography.fontSize.lg,
+    fontSize: 18,
   },
 });

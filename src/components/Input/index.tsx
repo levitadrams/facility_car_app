@@ -11,8 +11,7 @@ import {
   StyleSheet,
   TextInputProps,
 } from 'react-native';
-import theme from '../../theme';
-import { inputStates } from '../../theme/tokens';
+import { useTheme } from '../../hooks/useTheme';
 
 interface InputProps extends TextInputProps {
   label?: string;
@@ -26,36 +25,37 @@ interface InputProps extends TextInputProps {
 const Input = forwardRef<TextInput, InputProps>(
   ({ label, error, helperText, containerStyle, leftIcon, rightIcon, style, ...rest }, ref) => {
     const [isFocused, setIsFocused] = useState(false);
-    
+    const theme = useTheme();
+
     const getBorderColor = () => {
-      if (error) return inputStates.error.border;
-      if (isFocused) return inputStates.focused.border;
-      return inputStates.default.border;
+      if (error) return theme.danger;
+      if (isFocused) return theme.primary;
+      return theme.inputBorder;
     };
 
     return (
       <View style={[styles.container, containerStyle]}>
-        {label && <Text style={styles.label}>{label}</Text>}
+        {label && <Text style={[styles.label, { color: theme.text }]}>{label}</Text>}
         <View style={styles.inputWrapper}>
           {leftIcon && <View style={styles.leftIconContainer}>{leftIcon}</View>}
           <TextInput
             ref={ref}
             style={[
               styles.input,
-              leftIcon && styles.inputWithLeftIcon,
-              rightIcon && styles.inputWithRightIcon,
-              { borderColor: getBorderColor() },
+              leftIcon ? styles.inputWithLeftIcon : undefined,
+              rightIcon ? styles.inputWithRightIcon : undefined,
+              { borderColor: getBorderColor(), color: theme.text, backgroundColor: theme.inputBg },
               style,
             ]}
-            placeholderTextColor={theme.colors.text.tertiary}
+            placeholderTextColor={theme.textMuted}
             onFocus={() => setIsFocused(true)}
             onBlur={() => setIsFocused(false)}
             {...rest}
           />
           {rightIcon && <View style={styles.rightIconContainer}>{rightIcon}</View>}
         </View>
-        {error && <Text style={styles.errorText}>{error}</Text>}
-        {!error && helperText && <Text style={styles.helperText}>{helperText}</Text>}
+        {error && <Text style={[styles.errorText, { color: theme.danger }]}>{error}</Text>}
+        {!error && helperText && <Text style={[styles.helperText, { color: theme.textMuted }]}>{helperText}</Text>}
       </View>
     );
   }
@@ -67,13 +67,12 @@ export default Input;
 
 const styles = StyleSheet.create({
   container: {
-    marginBottom: theme.spacing.md,
+    marginBottom: 16,
   },
   label: {
-    fontSize: theme.typography.fontSize.sm,
-    fontWeight: theme.typography.fontWeight.medium,
-    color: theme.colors.text.primary,
-    marginBottom: theme.spacing.xs,
+    fontSize: 14,
+    fontWeight: '500',
+    marginBottom: 4,
   },
   inputWrapper: {
     position: 'relative',
@@ -82,13 +81,11 @@ const styles = StyleSheet.create({
   },
   input: {
     flex: 1,
-    height: theme.layout.inputHeight,
+    height: 50,
     borderWidth: 1,
-    borderRadius: theme.borderRadius.md,
-    paddingHorizontal: theme.spacing.md,
-    fontSize: theme.typography.fontSize.md,
-    color: theme.colors.text.primary,
-    backgroundColor: theme.colors.white,
+    borderRadius: 12,
+    paddingHorizontal: 16,
+    fontSize: 16,
   },
   inputWithLeftIcon: {
     paddingLeft: 48,
@@ -98,22 +95,20 @@ const styles = StyleSheet.create({
   },
   leftIconContainer: {
     position: 'absolute',
-    left: theme.spacing.md,
+    left: 16,
     zIndex: 1,
   },
   rightIconContainer: {
     position: 'absolute',
-    right: theme.spacing.md,
+    right: 16,
     zIndex: 1,
   },
   errorText: {
-    fontSize: theme.typography.fontSize.xs,
-    color: theme.colors.danger[600],
-    marginTop: theme.spacing.xs,
+    fontSize: 12,
+    marginTop: 4,
   },
   helperText: {
-    fontSize: theme.typography.fontSize.xs,
-    color: theme.colors.text.tertiary,
-    marginTop: theme.spacing.xs,
+    fontSize: 12,
+    marginTop: 4,
   },
 });

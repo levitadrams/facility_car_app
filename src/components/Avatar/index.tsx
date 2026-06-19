@@ -11,7 +11,7 @@ import {
   StyleSheet,
   ViewStyle,
 } from 'react-native';
-import theme from '../../theme';
+import { useTheme } from '../../hooks/useTheme';
 
 interface AvatarProps {
   name?: string;
@@ -64,8 +64,9 @@ export default function Avatar({
     }
   };
 
-  const defaultBgColor = backgroundColor || theme.colors.primary[600];
-  const defaultTextColor = textColor || theme.colors.white;
+  const theme = useTheme();
+  const defaultBgColor = backgroundColor || theme.primary;
+  const defaultTextColor = textColor || theme.textInverse;
 
   return (
     <View
@@ -89,7 +90,7 @@ export default function Avatar({
 
 const styles = StyleSheet.create({
   avatar: {
-    borderRadius: theme.borderRadius.full,
+    borderRadius: 9999,
     justifyContent: 'center',
     alignItems: 'center',
     overflow: 'hidden',
@@ -114,18 +115,18 @@ const styles = StyleSheet.create({
     resizeMode: 'cover',
   },
   text: {
-    fontWeight: theme.typography.fontWeight.bold,
+    fontWeight: '700',
   },
   textSm: {
-    fontSize: theme.typography.fontSize.sm,
+    fontSize: 14,
   },
   textMd: {
-    fontSize: theme.typography.fontSize.md,
+    fontSize: 16,
   },
   textLg: {
-    fontSize: theme.typography.fontSize.xl,
+    fontSize: 20,
   },
   textXl: {
-    fontSize: theme.typography.fontSize.xxl,
+    fontSize: 24,
   },
 });

@@ -10,7 +10,7 @@ import {
   StyleSheet,
   ViewStyle,
 } from 'react-native';
-import theme from '../../theme';
+import { useTheme } from '../../hooks/useTheme';
 
 interface BadgeProps {
   label: string;
@@ -25,32 +25,34 @@ export default function Badge({
   size = 'md',
   style,
 }: BadgeProps) {
+  const theme = useTheme();
+
   const getVariantStyle = () => {
     switch (variant) {
       case 'success':
         return {
-          backgroundColor: theme.colors.success[100],
-          color: theme.colors.success[800],
+          backgroundColor: theme.badgeSuccessBg,
+          color: theme.badgeSuccess,
         };
       case 'warning':
         return {
-          backgroundColor: theme.colors.warning[100],
-          color: theme.colors.warning[800],
+          backgroundColor: theme.badgeWarningBg,
+          color: theme.badgeWarning,
         };
       case 'error':
         return {
-          backgroundColor: theme.colors.danger[100],
-          color: theme.colors.danger[800],
+          backgroundColor: theme.badgeDangerBg,
+          color: theme.badgeDanger,
         };
       case 'info':
         return {
-          backgroundColor: theme.colors.info[100],
-          color: theme.colors.info[800],
+          backgroundColor: theme.primaryLight,
+          color: theme.primary,
         };
       default:
         return {
-          backgroundColor: theme.colors.gray[200],
-          color: theme.colors.gray[800],
+          backgroundColor: theme.badgeNeutralBg,
+          color: theme.badgeNeutral,
         };
     }
   };
@@ -103,31 +105,31 @@ export default function Badge({
 
 const styles = StyleSheet.create({
   badge: {
-    borderRadius: theme.borderRadius.full,
+    borderRadius: 9999,
     alignSelf: 'flex-start',
   },
   badgeSm: {
-    paddingHorizontal: theme.spacing.xs,
+    paddingHorizontal: 4,
     paddingVertical: 2,
   },
   badgeMd: {
-    paddingHorizontal: theme.spacing.sm,
-    paddingVertical: theme.spacing.xs,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
   },
   badgeLg: {
-    paddingHorizontal: theme.spacing.md,
-    paddingVertical: theme.spacing.sm,
+    paddingHorizontal: 16,
+    paddingVertical: 8,
   },
   text: {
-    fontWeight: theme.typography.fontWeight.semibold,
+    fontWeight: '600',
   },
   textSm: {
-    fontSize: theme.typography.fontSize.xs,
+    fontSize: 12,
   },
   textMd: {
-    fontSize: theme.typography.fontSize.sm,
+    fontSize: 14,
   },
   textLg: {
-    fontSize: theme.typography.fontSize.md,
+    fontSize: 16,
   },
 });

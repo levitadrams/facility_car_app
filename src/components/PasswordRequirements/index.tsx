@@ -6,7 +6,7 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import theme from '../../theme';
+import { useTheme } from '../../hooks/useTheme';
 
 interface PasswordRequirementsProps {
   password: string;
@@ -47,13 +47,14 @@ const requirements: Requirement[] = [
 ];
 
 export default function PasswordRequirements({ password }: PasswordRequirementsProps) {
+  const theme = useTheme();
   const validatedCount = requirements.filter((req) => req.test(password)).length;
   const totalRequirements = requirements.length;
   const progress = validatedCount / totalRequirements;
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Requisitos da senha:</Text>
+    <View style={[styles.container, { backgroundColor: theme.surfaceHighlight, borderColor: theme.border }]}>
+      <Text style={[styles.title, { color: theme.textMuted }]}>Requisitos da senha:</Text>
 
       {requirements.map((requirement) => {
         const isValid = requirement.test(password);
@@ -63,12 +64,12 @@ export default function PasswordRequirements({ password }: PasswordRequirementsP
             <Ionicons
               name={isValid ? 'checkmark-circle' : 'ellipse-outline'}
               size={20}
-              color={isValid ? theme.colors.success[500] : theme.colors.text.tertiary}
+              color={isValid ? theme.success : theme.textMuted}
             />
             <Text
               style={[
                 styles.requirementText,
-                isValid ? styles.requirementTextValid : styles.requirementTextInvalid,
+                { color: isValid ? theme.success : theme.textMuted },
               ]}
             >
               {requirement.label}
@@ -77,8 +78,8 @@ export default function PasswordRequirements({ password }: PasswordRequirementsP
         );
       })}
 
-      <View style={styles.progressBar}>
-        <View style={[styles.progressFill, { width: `${progress * 100}%` }]} />
+      <View style={[styles.progressBar, { backgroundColor: theme.border }]}>
+        <View style={[styles.progressFill, { width: `${progress * 100}%`, backgroundColor: theme.success }]} />
       </View>
     </View>
   );
@@ -86,43 +87,34 @@ export default function PasswordRequirements({ password }: PasswordRequirementsP
 
 const styles = StyleSheet.create({
   container: {
-    marginTop: theme.spacing.sm,
-    padding: theme.spacing.md,
-    backgroundColor: theme.colors.background.tertiary,
-    borderRadius: theme.borderRadius.md,
+    marginTop: 8,
+    padding: 16,
+    borderRadius: 8,
+    borderWidth: 1,
   },
   title: {
-    fontSize: theme.typography.fontSize.sm,
-    fontWeight: theme.typography.fontWeight.semibold,
-    color: theme.colors.text.secondary,
-    marginBottom: theme.spacing.sm,
+    fontSize: 14,
+    fontWeight: '600',
+    marginBottom: 8,
   },
   requirement: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: theme.spacing.xs,
+    marginBottom: 4,
   },
   requirementText: {
-    fontSize: theme.typography.fontSize.xs,
-    marginLeft: theme.spacing.sm,
+    fontSize: 12,
+    marginLeft: 8,
     flex: 1,
-  },
-  requirementTextValid: {
-    color: theme.colors.success[500],
-  },
-  requirementTextInvalid: {
-    color: theme.colors.text.tertiary,
   },
   progressBar: {
     height: 4,
-    backgroundColor: theme.colors.border.light,
     borderRadius: 2,
-    marginTop: theme.spacing.sm,
+    marginTop: 8,
     overflow: 'hidden',
   },
   progressFill: {
     height: '100%',
-    backgroundColor: theme.colors.success[500],
     borderRadius: 2,
   },
 });

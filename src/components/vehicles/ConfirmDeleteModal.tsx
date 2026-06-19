@@ -13,7 +13,7 @@ import {
   TouchableWithoutFeedback,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import theme from '../../theme';
+import { useTheme } from '../../hooks/useTheme';
 
 interface ConfirmDeleteModalProps {
   visible: boolean;
@@ -28,6 +28,7 @@ export default function ConfirmDeleteModal({
   onCancel,
   onConfirm,
 }: ConfirmDeleteModalProps) {
+  const theme = useTheme();
   return (
     <Modal
       visible={visible}
@@ -38,21 +39,21 @@ export default function ConfirmDeleteModal({
       <TouchableWithoutFeedback onPress={onCancel}>
         <View style={styles.overlay}>
           <TouchableWithoutFeedback>
-            <View style={styles.container}>
-              <View style={styles.iconContainer}>
-                <Ionicons name="warning" size={32} color={theme.colors.danger[500]} />
+            <View style={[styles.container, { backgroundColor: theme.surface }]}>
+              <View style={[styles.iconContainer, { backgroundColor: theme.dangerLight }]}>
+                <Ionicons name="warning" size={32} color={theme.danger} />
               </View>
-              <Text style={styles.title}>Excluir veículo?</Text>
-              <Text style={styles.message}>
+              <Text style={[styles.title, { color: theme.text }]}>Excluir veículo?</Text>
+              <Text style={[styles.message, { color: theme.textMuted }]}>
                 Deseja realmente excluir o veículo{' '}
-                <Text style={styles.vehicleName}>{vehicleName}</Text>?
+                <Text style={[styles.vehicleName, { color: theme.text }]}>{vehicleName}</Text>?
                 Esta ação não pode ser desfeita.
               </Text>
               <View style={styles.actions}>
-                <TouchableOpacity style={styles.cancelButton} onPress={onCancel}>
-                  <Text style={styles.cancelText}>Cancelar</Text>
+                <TouchableOpacity style={[styles.cancelButton, { borderColor: theme.border }]} onPress={onCancel}>
+                  <Text style={[styles.cancelText, { color: theme.text }]}>Cancelar</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.confirmButton} onPress={onConfirm}>
+                <TouchableOpacity style={[styles.confirmButton, { backgroundColor: theme.danger }]} onPress={onConfirm}>
                   <Text style={styles.confirmText}>Excluir</Text>
                 </TouchableOpacity>
               </View>
@@ -70,12 +71,11 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
     justifyContent: 'center',
     alignItems: 'center',
-    padding: theme.spacing.lg,
+    padding: 24,
   },
   container: {
-    backgroundColor: theme.colors.white,
-    borderRadius: theme.borderRadius.xl,
-    padding: theme.spacing.xl,
+    borderRadius: 16,
+    padding: 32,
     width: '100%',
     maxWidth: 400,
     alignItems: 'center',
@@ -84,56 +84,49 @@ const styles = StyleSheet.create({
     width: 64,
     height: 64,
     borderRadius: 32,
-    backgroundColor: theme.colors.danger[50],
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: theme.spacing.md,
+    marginBottom: 16,
   },
   title: {
-    fontSize: theme.typography.fontSize.xl,
-    fontWeight: theme.typography.fontWeight.bold,
-    color: theme.colors.text.primary,
-    marginBottom: theme.spacing.sm,
+    fontSize: 20,
+    fontWeight: '700',
+    marginBottom: 8,
   },
   message: {
-    fontSize: theme.typography.fontSize.md,
-    color: theme.colors.text.secondary,
+    fontSize: 16,
     textAlign: 'center',
-    marginBottom: theme.spacing.lg,
+    marginBottom: 24,
     lineHeight: 22,
   },
   vehicleName: {
-    fontWeight: theme.typography.fontWeight.semibold,
-    color: theme.colors.text.primary,
+    fontWeight: '600',
   },
   actions: {
     flexDirection: 'row',
     width: '100%',
-    gap: theme.spacing.md,
+    gap: 16,
   },
   cancelButton: {
     flex: 1,
-    paddingVertical: theme.spacing.md,
-    borderRadius: theme.borderRadius.md,
+    paddingVertical: 16,
+    borderRadius: 8,
     borderWidth: 1,
-    borderColor: theme.colors.border.light,
     alignItems: 'center',
   },
   cancelText: {
-    fontSize: theme.typography.fontSize.md,
-    fontWeight: theme.typography.fontWeight.semibold,
-    color: theme.colors.text.primary,
+    fontSize: 16,
+    fontWeight: '600',
   },
   confirmButton: {
     flex: 1,
-    paddingVertical: theme.spacing.md,
-    borderRadius: theme.borderRadius.md,
-    backgroundColor: theme.colors.danger[500],
+    paddingVertical: 16,
+    borderRadius: 8,
     alignItems: 'center',
   },
   confirmText: {
-    fontSize: theme.typography.fontSize.md,
-    fontWeight: theme.typography.fontWeight.semibold,
-    color: theme.colors.white,
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#FFFFFF',
   },
 });

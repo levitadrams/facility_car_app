@@ -15,7 +15,8 @@ import { Ionicons } from '@expo/vector-icons';
 import Card from '../../components/Card';
 import Avatar from '../../components/Avatar';
 import Badge from '../../components/Badge';
-import theme from '../../theme';
+import { useTheme } from '../../hooks/useTheme';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 interface Driver {
   id: string;
@@ -62,37 +63,39 @@ const mockDrivers: Driver[] = [
 ];
 
 export default function DriversScreen() {
+  const theme = useTheme();
+  const insets = useSafeAreaInsets();
   const renderDriver = ({ item }: { item: Driver }) => (
     <Card variant="default" onPress={() => console.log('Driver:', item.id)} style={styles.card}>
       <View style={styles.cardContent}>
-        <Avatar 
-          name={item.name} 
+        <Avatar
+          name={item.name}
           size="md"
-          backgroundColor={theme.colors.secondary[600]}
+          backgroundColor={theme.secondary}
         />
-        
+
         <View style={styles.driverInfo}>
           <View style={styles.driverHeader}>
-            <Text style={styles.driverName}>{item.name}</Text>
-            <Badge 
-              label={item.status === 'active' ? 'Ativo' : 'Inativo'} 
+            <Text style={[styles.driverName, { color: theme.text }]}>{item.name}</Text>
+            <Badge
+              label={item.status === 'active' ? 'Ativo' : 'Inativo'}
               variant={item.status === 'active' ? 'success' : 'neutral'}
               size="sm"
             />
           </View>
-          
+
           <View style={styles.driverDetails}>
             <View style={styles.detailRow}>
-              <Ionicons name="mail-outline" size={14} color={theme.colors.text.tertiary} />
-              <Text style={styles.detailText}>{item.email}</Text>
+              <Ionicons name="mail-outline" size={14} color={theme.textMuted} />
+              <Text style={[styles.detailText, { color: theme.textMuted }]}>{item.email}</Text>
             </View>
             <View style={styles.detailRow}>
-              <Ionicons name="call-outline" size={14} color={theme.colors.text.tertiary} />
-              <Text style={styles.detailText}>{item.phone}</Text>
+              <Ionicons name="call-outline" size={14} color={theme.textMuted} />
+              <Text style={[styles.detailText, { color: theme.textMuted }]}>{item.phone}</Text>
             </View>
             <View style={styles.detailRow}>
-              <Ionicons name="car-outline" size={14} color={theme.colors.text.tertiary} />
-              <Text style={styles.detailText}>{item.trips} viagens</Text>
+              <Ionicons name="car-outline" size={14} color={theme.textMuted} />
+              <Text style={[styles.detailText, { color: theme.textMuted }]}>{item.trips} viagens</Text>
             </View>
           </View>
         </View>
@@ -101,37 +104,37 @@ export default function DriversScreen() {
   );
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: theme.background, paddingTop: insets.top, paddingBottom: insets.bottom }]}>
       {/* Header */}
-      <View style={styles.header}>
-        <Text style={styles.title}>Motoristas</Text>
-        <TouchableOpacity 
+      <View style={[styles.header, { backgroundColor: theme.surface, borderBottomColor: theme.border }]}>
+        <Text style={[styles.title, { color: theme.text }]}>Motoristas</Text>
+        <TouchableOpacity
           style={styles.addButton}
           onPress={() => console.log('Add driver')}
         >
-          <Ionicons name="person-add" size={24} color={theme.colors.primary[600]} />
+          <Ionicons name="person-add" size={24} color={theme.primary} />
         </TouchableOpacity>
       </View>
 
       {/* Summary */}
-      <View style={styles.summary}>
+      <View style={[styles.summary, { backgroundColor: theme.surface }]}>
         <View style={styles.summaryItem}>
-          <Text style={styles.summaryValue}>{mockDrivers.length}</Text>
-          <Text style={styles.summaryLabel}>Total</Text>
+          <Text style={[styles.summaryValue, { color: theme.secondary }]}>{mockDrivers.length}</Text>
+          <Text style={[styles.summaryLabel, { color: theme.textMuted }]}>Total</Text>
         </View>
-        <View style={styles.summaryDivider} />
+        <View style={[styles.summaryDivider, { backgroundColor: theme.border }]} />
         <View style={styles.summaryItem}>
-          <Text style={styles.summaryValue}>
+          <Text style={[styles.summaryValue, { color: theme.secondary }]}>
             {mockDrivers.filter(d => d.status === 'active').length}
           </Text>
-          <Text style={styles.summaryLabel}>Ativos</Text>
+          <Text style={[styles.summaryLabel, { color: theme.textMuted }]}>Ativos</Text>
         </View>
-        <View style={styles.summaryDivider} />
+        <View style={[styles.summaryDivider, { backgroundColor: theme.border }]} />
         <View style={styles.summaryItem}>
-          <Text style={styles.summaryValue}>
+          <Text style={[styles.summaryValue, { color: theme.secondary }]}>
             {mockDrivers.reduce((sum, d) => sum + d.trips, 0)}
           </Text>
-          <Text style={styles.summaryLabel}>Viagens</Text>
+          <Text style={[styles.summaryLabel, { color: theme.textMuted }]}>Viagens</Text>
         </View>
       </View>
 
@@ -149,56 +152,48 @@ export default function DriversScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: theme.colors.background.secondary,
   },
   header: {
-    backgroundColor: theme.colors.white,
-    paddingHorizontal: theme.layout.containerPadding,
-    paddingTop: theme.spacing.xl,
-    paddingBottom: theme.spacing.lg,
+    paddingHorizontal: 24,
+    paddingTop: 32,
+    paddingBottom: 24,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     borderBottomWidth: 1,
-    borderBottomColor: theme.colors.border.light,
   },
   title: {
-    fontSize: theme.typography.fontSize.xxl,
-    fontWeight: theme.typography.fontWeight.bold,
-    color: theme.colors.text.primary,
+    fontSize: 24,
+    fontWeight: '700',
   },
   addButton: {
-    padding: theme.spacing.sm,
+    padding: 8,
   },
   summary: {
-    backgroundColor: theme.colors.white,
     flexDirection: 'row',
-    paddingVertical: theme.spacing.md,
-    paddingHorizontal: theme.layout.containerPadding,
-    marginBottom: theme.spacing.md,
+    paddingVertical: 16,
+    paddingHorizontal: 24,
+    marginBottom: 16,
   },
   summaryItem: {
     flex: 1,
     alignItems: 'center',
   },
   summaryValue: {
-    fontSize: theme.typography.fontSize.xxl,
-    fontWeight: theme.typography.fontWeight.bold,
-    color: theme.colors.secondary[600],
-    marginBottom: theme.spacing.xxs,
+    fontSize: 24,
+    fontWeight: '700',
+    marginBottom: 2,
   },
   summaryLabel: {
-    fontSize: theme.typography.fontSize.sm,
-    color: theme.colors.text.secondary,
+    fontSize: 14,
   },
   summaryDivider: {
     width: 1,
-    backgroundColor: theme.colors.border.light,
-    marginHorizontal: theme.spacing.md,
+    marginHorizontal: 16,
   },
   list: {
-    padding: theme.layout.containerPadding,
-    gap: theme.spacing.md,
+    padding: 24,
+    gap: 16,
   },
   card: {
     marginBottom: 0,
@@ -208,29 +203,27 @@ const styles = StyleSheet.create({
   },
   driverInfo: {
     flex: 1,
-    marginLeft: theme.spacing.md,
+    marginLeft: 16,
   },
   driverHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: theme.spacing.sm,
+    marginBottom: 8,
   },
   driverName: {
-    fontSize: theme.typography.fontSize.md,
-    fontWeight: theme.typography.fontWeight.semibold,
-    color: theme.colors.text.primary,
+    fontSize: 16,
+    fontWeight: '600',
   },
   driverDetails: {
-    gap: theme.spacing.xs,
+    gap: 4,
   },
   detailRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: theme.spacing.xs,
+    gap: 4,
   },
   detailText: {
-    fontSize: theme.typography.fontSize.sm,
-    color: theme.colors.text.secondary,
+    fontSize: 14,
   },
 });

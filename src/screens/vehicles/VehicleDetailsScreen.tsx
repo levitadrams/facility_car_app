@@ -15,7 +15,8 @@ import { Ionicons } from '@expo/vector-icons';
 import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { VehiclesStackParamList } from '../../navigation/VehiclesStack';
-import theme from '../../theme';
+import { useTheme } from '../../hooks/useTheme';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 type NavigationProp = NativeStackNavigationProp<VehiclesStackParamList>;
 type RouteProps = RouteProp<VehiclesStackParamList, 'VehicleDetails'>;
@@ -24,6 +25,8 @@ export default function VehicleDetailsScreen() {
   const navigation = useNavigation<NavigationProp>();
   const route = useRoute<RouteProps>();
   const { vehicle } = route.params;
+  const theme = useTheme();
+  const insets = useSafeAreaInsets();
 
   const brandName = vehicle.brand?.name || '';
   const modelName = vehicle.model?.name || '';
@@ -45,43 +48,43 @@ export default function VehicleDetailsScreen() {
   ];
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: theme.background, paddingTop: insets.top, paddingBottom: insets.bottom }]}>
       {/* Header */}
-      <View style={styles.header}>
+      <View style={[styles.header, { backgroundColor: theme.surface, borderBottomColor: theme.border }]}>
         <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Ionicons name="arrow-back" size={24} color={theme.colors.text.primary} />
+          <Ionicons name="arrow-back" size={24} color={theme.text} />
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>Detalhes</Text>
+        <Text style={[styles.headerTitle, { color: theme.text }]}>Detalhes</Text>
         <TouchableOpacity
           onPress={() => navigation.navigate('VehicleForm', { vehicle })}
         >
-          <Ionicons name="create-outline" size={24} color={theme.colors.primary[600]} />
+          <Ionicons name="create-outline" size={24} color={theme.primary} />
         </TouchableOpacity>
       </View>
 
       <ScrollView contentContainerStyle={styles.content}>
         {/* Vehicle Name */}
-        <View style={styles.nameSection}>
-          <View style={styles.iconContainer}>
-            <Ionicons name="car-sport" size={40} color={theme.colors.primary[600]} />
+        <View style={[styles.nameSection, { backgroundColor: theme.surface, borderColor: theme.border }]}>
+          <View style={[styles.iconContainer, { backgroundColor: theme.primaryLight }]}>
+            <Ionicons name="car-sport" size={40} color={theme.primary} />
           </View>
-          <Text style={styles.vehicleName}>{displayName}</Text>
-          <Text style={styles.vehicleSubtitle}>
+          <Text style={[styles.vehicleName, { color: theme.text }]}>{displayName}</Text>
+          <Text style={[styles.vehicleSubtitle, { color: theme.textMuted }]}>
             {brandName} {modelName} • {vehicle.year}
           </Text>
         </View>
 
         {/* Info Cards */}
-        <View style={styles.infoSection}>
-          <Text style={styles.sectionTitle}>Informações</Text>
+        <View style={[styles.infoSection, { backgroundColor: theme.surface, borderColor: theme.border }]}>
+          <Text style={[styles.sectionTitle, { color: theme.text }]}>Informações</Text>
           {infoItems.map((item, index) => (
-            <View key={index} style={styles.infoRow}>
-              <View style={styles.infoIcon}>
-                <Ionicons name={item.icon as keyof typeof Ionicons.glyphMap} size={18} color={theme.colors.primary[600]} />
+            <View key={index} style={[styles.infoRow, { borderBottomColor: theme.border }]}>
+              <View style={[styles.infoIcon, { backgroundColor: theme.primaryLight }]}>
+                <Ionicons name={item.icon as keyof typeof Ionicons.glyphMap} size={18} color={theme.primary} />
               </View>
               <View style={styles.infoContent}>
-                <Text style={styles.infoLabel}>{item.label}</Text>
-                <Text style={styles.infoValue}>{item.value}</Text>
+                <Text style={[styles.infoLabel, { color: theme.textMuted }]}>{item.label}</Text>
+                <Text style={[styles.infoValue, { color: theme.text }]}>{item.value}</Text>
               </View>
             </View>
           ))}
@@ -94,95 +97,79 @@ export default function VehicleDetailsScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: theme.colors.background.secondary,
   },
   header: {
-    backgroundColor: theme.colors.white,
-    paddingHorizontal: theme.layout.containerPadding,
-    paddingTop: theme.spacing.xl,
-    paddingBottom: theme.spacing.lg,
+    paddingHorizontal: 24,
+    paddingTop: 32,
+    paddingBottom: 24,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     borderBottomWidth: 1,
-    borderBottomColor: theme.colors.border.light,
   },
   headerTitle: {
-    fontSize: theme.typography.fontSize.xl,
-    fontWeight: theme.typography.fontWeight.bold,
-    color: theme.colors.text.primary,
+    fontSize: 20,
+    fontWeight: '700',
   },
   content: {
-    padding: theme.layout.containerPadding,
+    padding: 24,
   },
   nameSection: {
-    backgroundColor: theme.colors.white,
-    borderRadius: theme.borderRadius.lg,
-    padding: theme.spacing.xl,
+    borderRadius: 12,
+    padding: 32,
     alignItems: 'center',
-    marginBottom: theme.spacing.lg,
+    marginBottom: 24,
     borderWidth: 1,
-    borderColor: theme.colors.border.light,
   },
   iconContainer: {
     width: 80,
     height: 80,
     borderRadius: 40,
-    backgroundColor: theme.colors.primary[50],
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: theme.spacing.md,
+    marginBottom: 16,
   },
   vehicleName: {
-    fontSize: theme.typography.fontSize.xl,
-    fontWeight: theme.typography.fontWeight.bold,
-    color: theme.colors.text.primary,
-    marginBottom: theme.spacing.xs,
+    fontSize: 20,
+    fontWeight: '700',
+    marginBottom: 4,
   },
   vehicleSubtitle: {
-    fontSize: theme.typography.fontSize.md,
-    color: theme.colors.text.secondary,
+    fontSize: 16,
   },
   infoSection: {
-    backgroundColor: theme.colors.white,
-    borderRadius: theme.borderRadius.lg,
-    padding: theme.spacing.lg,
+    borderRadius: 12,
+    padding: 24,
     borderWidth: 1,
-    borderColor: theme.colors.border.light,
   },
   sectionTitle: {
-    fontSize: theme.typography.fontSize.lg,
-    fontWeight: theme.typography.fontWeight.semibold,
-    color: theme.colors.text.primary,
-    marginBottom: theme.spacing.md,
+    fontSize: 18,
+    fontWeight: '600',
+    marginBottom: 16,
   },
   infoRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: theme.spacing.sm,
+    paddingVertical: 8,
     borderBottomWidth: 1,
-    borderBottomColor: theme.colors.border.light,
   },
   infoIcon: {
     width: 36,
     height: 36,
     borderRadius: 18,
-    backgroundColor: theme.colors.primary[50],
     justifyContent: 'center',
     alignItems: 'center',
-    marginRight: theme.spacing.md,
+    marginRight: 16,
   },
   infoContent: {
     flex: 1,
   },
   infoLabel: {
-    fontSize: theme.typography.fontSize.sm,
-    color: theme.colors.text.secondary,
+    fontSize: 14,
     marginBottom: 2,
   },
   infoValue: {
-    fontSize: theme.typography.fontSize.md,
-    fontWeight: theme.typography.fontWeight.semibold,
-    color: theme.colors.text.primary,
+    fontSize: 16,
+    fontWeight: '600',
   },
 });

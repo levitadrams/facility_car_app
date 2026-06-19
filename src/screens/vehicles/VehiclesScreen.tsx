@@ -14,7 +14,8 @@ import {
 import { Ionicons } from '@expo/vector-icons';
 import Card from '../../components/Card';
 import Badge from '../../components/Badge';
-import theme from '../../theme';
+import { useTheme } from '../../hooks/useTheme';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 interface Vehicle {
   id: string;
@@ -61,6 +62,8 @@ const mockVehicles: Vehicle[] = [
 ];
 
 export default function VehiclesScreen() {
+  const theme = useTheme();
+  const insets = useSafeAreaInsets();
   const getStatusVariant = (status: Vehicle['status']) => {
     switch (status) {
       case 'active':
@@ -86,19 +89,19 @@ export default function VehiclesScreen() {
   const renderVehicle = ({ item }: { item: Vehicle }) => (
     <Card variant="default" onPress={() => console.log('Vehicle:', item.id)} style={styles.card}>
       <View style={styles.cardHeader}>
-        <View style={styles.iconContainer}>
-          <Ionicons name="car-sport" size={24} color={theme.colors.primary[600]} />
+        <View style={[styles.iconContainer, { backgroundColor: theme.primaryLight }]}>
+          <Ionicons name="car-sport" size={24} color={theme.primary} />
         </View>
         <View style={styles.vehicleInfo}>
-          <Text style={styles.vehicleName}>
+          <Text style={[styles.vehicleName, { color: theme.text }]}>
             {item.brand} {item.model}
           </Text>
-          <Text style={styles.vehicleDetails}>
+          <Text style={[styles.vehicleDetails, { color: theme.textMuted }]}>
             {item.plate} • {item.year}
           </Text>
         </View>
-        <Badge 
-          label={getStatusLabel(item.status)} 
+        <Badge
+          label={getStatusLabel(item.status)}
           variant={getStatusVariant(item.status)}
           size="sm"
         />
@@ -107,37 +110,37 @@ export default function VehiclesScreen() {
   );
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: theme.background, paddingTop: insets.top, paddingBottom: insets.bottom }]}>
       {/* Header */}
-      <View style={styles.header}>
-        <Text style={styles.title}>Veículos</Text>
-        <TouchableOpacity 
+      <View style={[styles.header, { backgroundColor: theme.surface, borderBottomColor: theme.border }]}>
+        <Text style={[styles.title, { color: theme.text }]}>Veículos</Text>
+        <TouchableOpacity
           style={styles.addButton}
           onPress={() => console.log('Add vehicle')}
         >
-          <Ionicons name="add-circle" size={32} color={theme.colors.primary[600]} />
+          <Ionicons name="add-circle" size={32} color={theme.primary} />
         </TouchableOpacity>
       </View>
 
       {/* Summary */}
-      <View style={styles.summary}>
+      <View style={[styles.summary, { backgroundColor: theme.surface }]}>
         <View style={styles.summaryItem}>
-          <Text style={styles.summaryValue}>{mockVehicles.length}</Text>
-          <Text style={styles.summaryLabel}>Total</Text>
+          <Text style={[styles.summaryValue, { color: theme.primary }]}>{mockVehicles.length}</Text>
+          <Text style={[styles.summaryLabel, { color: theme.textMuted }]}>Total</Text>
         </View>
-        <View style={styles.summaryDivider} />
+        <View style={[styles.summaryDivider, { backgroundColor: theme.border }]} />
         <View style={styles.summaryItem}>
-          <Text style={styles.summaryValue}>
+          <Text style={[styles.summaryValue, { color: theme.primary }]}>
             {mockVehicles.filter(v => v.status === 'active').length}
           </Text>
-          <Text style={styles.summaryLabel}>Ativos</Text>
+          <Text style={[styles.summaryLabel, { color: theme.textMuted }]}>Ativos</Text>
         </View>
-        <View style={styles.summaryDivider} />
+        <View style={[styles.summaryDivider, { backgroundColor: theme.border }]} />
         <View style={styles.summaryItem}>
-          <Text style={styles.summaryValue}>
+          <Text style={[styles.summaryValue, { color: theme.primary }]}>
             {mockVehicles.filter(v => v.status === 'maintenance').length}
           </Text>
-          <Text style={styles.summaryLabel}>Manutenção</Text>
+          <Text style={[styles.summaryLabel, { color: theme.textMuted }]}>Manutenção</Text>
         </View>
       </View>
 
@@ -155,56 +158,48 @@ export default function VehiclesScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: theme.colors.background.secondary,
   },
   header: {
-    backgroundColor: theme.colors.white,
-    paddingHorizontal: theme.layout.containerPadding,
-    paddingTop: theme.spacing.xl,
-    paddingBottom: theme.spacing.lg,
+    paddingHorizontal: 24,
+    paddingTop: 32,
+    paddingBottom: 24,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     borderBottomWidth: 1,
-    borderBottomColor: theme.colors.border.light,
   },
   title: {
-    fontSize: theme.typography.fontSize.xxl,
-    fontWeight: theme.typography.fontWeight.bold,
-    color: theme.colors.text.primary,
+    fontSize: 24,
+    fontWeight: '700',
   },
   addButton: {
-    padding: theme.spacing.xs,
+    padding: 4,
   },
   summary: {
-    backgroundColor: theme.colors.white,
     flexDirection: 'row',
-    paddingVertical: theme.spacing.md,
-    paddingHorizontal: theme.layout.containerPadding,
-    marginBottom: theme.spacing.md,
+    paddingVertical: 16,
+    paddingHorizontal: 24,
+    marginBottom: 16,
   },
   summaryItem: {
     flex: 1,
     alignItems: 'center',
   },
   summaryValue: {
-    fontSize: theme.typography.fontSize.xxl,
-    fontWeight: theme.typography.fontWeight.bold,
-    color: theme.colors.primary[600],
-    marginBottom: theme.spacing.xxs,
+    fontSize: 24,
+    fontWeight: '700',
+    marginBottom: 2,
   },
   summaryLabel: {
-    fontSize: theme.typography.fontSize.sm,
-    color: theme.colors.text.secondary,
+    fontSize: 14,
   },
   summaryDivider: {
     width: 1,
-    backgroundColor: theme.colors.border.light,
-    marginHorizontal: theme.spacing.md,
+    marginHorizontal: 16,
   },
   list: {
-    padding: theme.layout.containerPadding,
-    gap: theme.spacing.md,
+    padding: 24,
+    gap: 16,
   },
   card: {
     marginBottom: 0,
@@ -216,23 +211,20 @@ const styles = StyleSheet.create({
   iconContainer: {
     width: 48,
     height: 48,
-    borderRadius: theme.borderRadius.md,
-    backgroundColor: theme.colors.primary[50],
+    borderRadius: 8,
     justifyContent: 'center',
     alignItems: 'center',
   },
   vehicleInfo: {
     flex: 1,
-    marginLeft: theme.spacing.md,
+    marginLeft: 16,
   },
   vehicleName: {
-    fontSize: theme.typography.fontSize.md,
-    fontWeight: theme.typography.fontWeight.semibold,
-    color: theme.colors.text.primary,
-    marginBottom: theme.spacing.xxs,
+    fontSize: 16,
+    fontWeight: '600',
+    marginBottom: 2,
   },
   vehicleDetails: {
-    fontSize: theme.typography.fontSize.sm,
-    color: theme.colors.text.secondary,
+    fontSize: 14,
   },
 });

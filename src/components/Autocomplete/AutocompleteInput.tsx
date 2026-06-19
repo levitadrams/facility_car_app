@@ -10,7 +10,7 @@ import {
   Keyboard,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import theme from '../../theme';
+import { useTheme } from '../../hooks/useTheme';
 
 interface AutocompleteInputProps<T> {
   label: string;
@@ -40,6 +40,7 @@ export default function AutocompleteInput<T>({
   const [loading, setLoading] = useState(false);
   const [showResults, setShowResults] = useState(false);
   const debounceRef = useRef<NodeJS.Timeout | null>(null);
+  const theme = useTheme();
 
   useEffect(() => {
     setQuery(displayValue);
@@ -94,38 +95,43 @@ export default function AutocompleteInput<T>({
 
   return (
     <View style={styles.container}>
-      {label && <Text style={styles.label}>{label}</Text>}
-      <View style={[styles.inputContainer, error ? styles.inputError : null, disabled ? styles.inputDisabled : null]}>
+      {label && <Text style={[styles.label, { color: theme.text }]}>{label}</Text>}
+      <View style={[
+        styles.inputContainer,
+        { borderColor: error ? theme.danger : theme.inputBorder, backgroundColor: disabled ? theme.background : theme.inputBg },
+        disabled ? styles.inputDisabled : null,
+      ]}>
         <TextInput
-          style={styles.input}
+          style={[styles.input, { color: theme.text }]}
           placeholder={placeholder}
+          placeholderTextColor={theme.textMuted}
           value={query}
           onChangeText={handleChangeText}
           editable={!disabled}
           autoCapitalize="words"
         />
-        {loading && <ActivityIndicator size="small" color={theme.colors.primary[600]} style={styles.icon} />}
+        {loading && <ActivityIndicator size="small" color={theme.primary} style={styles.icon} />}
         {!loading && query.length > 0 && (
           <TouchableOpacity onPress={handleClear} style={styles.icon}>
-            <Ionicons name="close-circle" size={20} color={theme.colors.text.tertiary} />
+            <Ionicons name="close-circle" size={20} color={theme.textMuted} />
           </TouchableOpacity>
         )}
       </View>
-      {error && <Text style={styles.errorText}>{error}</Text>}
+      {error && <Text style={[styles.errorText, { color: theme.danger }]}>{error}</Text>}
 
       {showResults && !disabled && (
-        <View style={styles.resultsContainer}>
+        <View style={[styles.resultsContainer, { backgroundColor: theme.surface, borderColor: theme.border }]}>
           {results.length === 0 ? (
-            <Text style={styles.emptyText}>Nenhum resultado encontrado</Text>
+            <Text style={[styles.emptyText, { color: theme.textMuted }]}>Nenhum resultado encontrado</Text>
           ) : (
             <ScrollView keyboardShouldPersistTaps="handled">
               {results.map((item, index) => (
                 <TouchableOpacity
                   key={index}
-                  style={styles.resultItem}
+                  style={[styles.resultItem, { borderBottomColor: theme.border }]}
                   onPress={() => handleSelect(item)}
                 >
-                  <Text style={styles.resultText}>{getItemLabel(item)}</Text>
+                  <Text style={[styles.resultText, { color: theme.text }]}>{getItemLabel(item)}</Text>
                 </TouchableOpacity>
               ))}
             </ScrollView>
@@ -138,70 +144,56 @@ export default function AutocompleteInput<T>({
 
 const styles = StyleSheet.create({
   container: {
-    marginBottom: theme.spacing.md,
+    marginBottom: 16,
     position: 'relative',
     zIndex: 1,
   },
   label: {
-    fontSize: theme.typography.fontSize.sm,
-    fontWeight: theme.typography.fontWeight.medium,
-    color: theme.colors.text.primary,
-    marginBottom: theme.spacing.xs,
+    fontSize: 14,
+    fontWeight: '500',
+    marginBottom: 4,
   },
   inputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: theme.colors.border.light,
-    borderRadius: theme.borderRadius.md,
-    backgroundColor: theme.colors.white,
-    paddingHorizontal: theme.spacing.md,
-    minHeight: theme.layout.inputHeight,
-  },
-  inputError: {
-    borderColor: theme.colors.danger[500],
+    borderRadius: 8,
+    paddingHorizontal: 16,
+    minHeight: 50,
   },
   inputDisabled: {
-    backgroundColor: theme.colors.background.tertiary,
-    borderColor: theme.colors.border.light,
+    opacity: 0.6,
   },
   input: {
     flex: 1,
-    fontSize: theme.typography.fontSize.md,
-    color: theme.colors.text.primary,
-    paddingVertical: theme.spacing.sm,
+    fontSize: 16,
+    paddingVertical: 8,
   },
   icon: {
-    marginLeft: theme.spacing.sm,
+    marginLeft: 8,
   },
   errorText: {
-    fontSize: theme.typography.fontSize.sm,
-    color: theme.colors.danger[600],
-    marginTop: theme.spacing.xs,
+    fontSize: 14,
+    marginTop: 4,
   },
   resultsContainer: {
-    backgroundColor: theme.colors.white,
     borderWidth: 1,
-    borderColor: theme.colors.border.light,
-    borderRadius: theme.borderRadius.md,
-    marginTop: theme.spacing.xs,
+    borderRadius: 8,
+    marginTop: 4,
     maxHeight: 200,
     overflow: 'hidden',
   },
   emptyText: {
-    padding: theme.spacing.md,
+    padding: 16,
     textAlign: 'center',
-    color: theme.colors.text.secondary,
-    fontSize: theme.typography.fontSize.md,
+    fontSize: 16,
   },
   resultItem: {
-    paddingVertical: theme.spacing.md,
-    paddingHorizontal: theme.spacing.md,
+    paddingVertical: 16,
+    paddingHorizontal: 16,
     borderBottomWidth: 1,
-    borderBottomColor: theme.colors.border.light,
   },
   resultText: {
-    fontSize: theme.typography.fontSize.md,
-    color: theme.colors.text.primary,
+    fontSize: 16,
   },
 });

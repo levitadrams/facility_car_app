@@ -14,7 +14,8 @@ import {
 import { Ionicons } from '@expo/vector-icons';
 import Card from '../../components/Card';
 import Badge from '../../components/Badge';
-import theme from '../../theme';
+import { useTheme } from '../../hooks/useTheme';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 interface Maintenance {
   id: string;
@@ -71,6 +72,8 @@ const mockMaintenances: Maintenance[] = [
 ];
 
 export default function MaintenanceScreen() {
+  const theme = useTheme();
+  const insets = useSafeAreaInsets();
   const getStatusVariant = (status: Maintenance['status']) => {
     switch (status) {
       case 'completed':
@@ -117,25 +120,25 @@ export default function MaintenanceScreen() {
   };
 
   const renderMaintenance = ({ item }: { item: Maintenance }) => (
-    <Card 
-      variant="default" 
-      onPress={() => console.log('Maintenance:', item.id)} 
+    <Card
+      variant="default"
+      onPress={() => console.log('Maintenance:', item.id)}
       style={styles.card}
     >
       <View style={styles.cardHeader}>
         <View style={styles.vehicleInfo}>
           <View style={styles.vehicleHeader}>
-            <Ionicons 
-              name="car-sport" 
-              size={20} 
-              color={theme.colors.primary[600]} 
+            <Ionicons
+              name="car-sport"
+              size={20}
+              color={theme.primary}
             />
-            <Text style={styles.vehicleName}>{item.vehicleName}</Text>
+            <Text style={[styles.vehicleName, { color: theme.text }]}>{item.vehicleName}</Text>
           </View>
-          <Text style={styles.vehiclePlate}>{item.vehiclePlate}</Text>
+          <Text style={[styles.vehiclePlate, { color: theme.textMuted }]}>{item.vehiclePlate}</Text>
         </View>
-        <Badge 
-          label={getStatusLabel(item.status)} 
+        <Badge
+          label={getStatusLabel(item.status)}
           variant={getStatusVariant(item.status)}
           size="sm"
         />
@@ -143,43 +146,43 @@ export default function MaintenanceScreen() {
 
       <View style={styles.maintenanceDetails}>
         <View style={styles.detailRow}>
-          <Ionicons 
-            name="construct-outline" 
-            size={16} 
-            color={theme.colors.text.tertiary} 
+          <Ionicons
+            name="construct-outline"
+            size={16}
+            color={theme.textMuted}
           />
-          <Text style={styles.detailLabel}>Tipo:</Text>
-          <Text style={styles.detailValue}>{item.type}</Text>
+          <Text style={[styles.detailLabel, { color: theme.textMuted }]}>Tipo:</Text>
+          <Text style={[styles.detailValue, { color: theme.text }]}>{item.type}</Text>
         </View>
 
         <View style={styles.detailRow}>
-          <Ionicons 
-            name="document-text-outline" 
-            size={16} 
-            color={theme.colors.text.tertiary} 
+          <Ionicons
+            name="document-text-outline"
+            size={16}
+            color={theme.textMuted}
           />
-          <Text style={styles.detailLabel}>Descrição:</Text>
-          <Text style={styles.detailValue}>{item.description}</Text>
+          <Text style={[styles.detailLabel, { color: theme.textMuted }]}>Descrição:</Text>
+          <Text style={[styles.detailValue, { color: theme.text }]}>{item.description}</Text>
         </View>
 
         <View style={styles.detailRow}>
-          <Ionicons 
-            name="calendar-outline" 
-            size={16} 
-            color={theme.colors.text.tertiary} 
+          <Ionicons
+            name="calendar-outline"
+            size={16}
+            color={theme.textMuted}
           />
-          <Text style={styles.detailLabel}>Data:</Text>
-          <Text style={styles.detailValue}>{formatDate(item.date)}</Text>
+          <Text style={[styles.detailLabel, { color: theme.textMuted }]}>Data:</Text>
+          <Text style={[styles.detailValue, { color: theme.text }]}>{formatDate(item.date)}</Text>
         </View>
 
         <View style={styles.detailRow}>
-          <Ionicons 
-            name="cash-outline" 
-            size={16} 
-            color={theme.colors.text.tertiary} 
+          <Ionicons
+            name="cash-outline"
+            size={16}
+            color={theme.textMuted}
           />
-          <Text style={styles.detailLabel}>Custo:</Text>
-          <Text style={styles.costValue}>{formatCurrency(item.cost)}</Text>
+          <Text style={[styles.detailLabel, { color: theme.textMuted }]}>Custo:</Text>
+          <Text style={[styles.costValue, { color: theme.accent }]}>{formatCurrency(item.cost)}</Text>
         </View>
       </View>
     </Card>
@@ -190,37 +193,37 @@ export default function MaintenanceScreen() {
   };
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: theme.background, paddingTop: insets.top, paddingBottom: insets.bottom }]}>
       {/* Header */}
-      <View style={styles.header}>
-        <Text style={styles.title}>Manutenções</Text>
-        <TouchableOpacity 
+      <View style={[styles.header, { backgroundColor: theme.surface, borderBottomColor: theme.border }]}>
+        <Text style={[styles.title, { color: theme.text }]}>Manutenções</Text>
+        <TouchableOpacity
           style={styles.addButton}
           onPress={() => console.log('Add maintenance')}
         >
-          <Ionicons name="add-circle" size={32} color={theme.colors.primary[600]} />
+          <Ionicons name="add-circle" size={32} color={theme.primary} />
         </TouchableOpacity>
       </View>
 
       {/* Summary */}
-      <View style={styles.summary}>
+      <View style={[styles.summary, { backgroundColor: theme.surface }]}>
         <View style={styles.summaryItem}>
-          <Text style={styles.summaryValue}>{mockMaintenances.length}</Text>
-          <Text style={styles.summaryLabel}>Total</Text>
+          <Text style={[styles.summaryValue, { color: theme.accent }]}>{mockMaintenances.length}</Text>
+          <Text style={[styles.summaryLabel, { color: theme.textMuted }]}>Total</Text>
         </View>
-        <View style={styles.summaryDivider} />
+        <View style={[styles.summaryDivider, { backgroundColor: theme.border }]} />
         <View style={styles.summaryItem}>
-          <Text style={styles.summaryValue}>
+          <Text style={[styles.summaryValue, { color: theme.accent }]}>
             {mockMaintenances.filter(m => m.status === 'pending').length}
           </Text>
-          <Text style={styles.summaryLabel}>Pendentes</Text>
+          <Text style={[styles.summaryLabel, { color: theme.textMuted }]}>Pendentes</Text>
         </View>
-        <View style={styles.summaryDivider} />
+        <View style={[styles.summaryDivider, { backgroundColor: theme.border }]} />
         <View style={styles.summaryItem}>
-          <Text style={styles.summaryValue}>
+          <Text style={[styles.summaryValue, { color: theme.accent }]}>
             {formatCurrency(getTotalCost())}
           </Text>
-          <Text style={styles.summaryLabel}>Custo Total</Text>
+          <Text style={[styles.summaryLabel, { color: theme.textMuted }]}>Custo Total</Text>
         </View>
       </View>
 
@@ -238,56 +241,48 @@ export default function MaintenanceScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: theme.colors.background.secondary,
   },
   header: {
-    backgroundColor: theme.colors.white,
-    paddingHorizontal: theme.layout.containerPadding,
-    paddingTop: theme.spacing.xl,
-    paddingBottom: theme.spacing.lg,
+    paddingHorizontal: 24,
+    paddingTop: 32,
+    paddingBottom: 24,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     borderBottomWidth: 1,
-    borderBottomColor: theme.colors.border.light,
   },
   title: {
-    fontSize: theme.typography.fontSize.xxl,
-    fontWeight: theme.typography.fontWeight.bold,
-    color: theme.colors.text.primary,
+    fontSize: 24,
+    fontWeight: '700',
   },
   addButton: {
-    padding: theme.spacing.xs,
+    padding: 4,
   },
   summary: {
-    backgroundColor: theme.colors.white,
     flexDirection: 'row',
-    paddingVertical: theme.spacing.md,
-    paddingHorizontal: theme.layout.containerPadding,
-    marginBottom: theme.spacing.md,
+    paddingVertical: 16,
+    paddingHorizontal: 24,
+    marginBottom: 16,
   },
   summaryItem: {
     flex: 1,
     alignItems: 'center',
   },
   summaryValue: {
-    fontSize: theme.typography.fontSize.lg,
-    fontWeight: theme.typography.fontWeight.bold,
-    color: theme.colors.accent[600],
-    marginBottom: theme.spacing.xxs,
+    fontSize: 18,
+    fontWeight: '700',
+    marginBottom: 2,
   },
   summaryLabel: {
-    fontSize: theme.typography.fontSize.sm,
-    color: theme.colors.text.secondary,
+    fontSize: 14,
   },
   summaryDivider: {
     width: 1,
-    backgroundColor: theme.colors.border.light,
-    marginHorizontal: theme.spacing.md,
+    marginHorizontal: 16,
   },
   list: {
-    padding: theme.layout.containerPadding,
-    gap: theme.spacing.md,
+    padding: 24,
+    gap: 16,
   },
   card: {
     marginBottom: 0,
@@ -296,7 +291,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'flex-start',
-    marginBottom: theme.spacing.md,
+    marginBottom: 16,
   },
   vehicleInfo: {
     flex: 1,
@@ -304,41 +299,36 @@ const styles = StyleSheet.create({
   vehicleHeader: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: theme.spacing.xs,
-    marginBottom: theme.spacing.xxs,
+    gap: 4,
+    marginBottom: 2,
   },
   vehicleName: {
-    fontSize: theme.typography.fontSize.md,
-    fontWeight: theme.typography.fontWeight.semibold,
-    color: theme.colors.text.primary,
+    fontSize: 16,
+    fontWeight: '600',
   },
   vehiclePlate: {
-    fontSize: theme.typography.fontSize.sm,
-    color: theme.colors.text.secondary,
-    marginLeft: theme.spacing.lg,
+    fontSize: 14,
+    marginLeft: 24,
   },
   maintenanceDetails: {
-    gap: theme.spacing.sm,
+    gap: 8,
   },
   detailRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: theme.spacing.xs,
+    gap: 4,
   },
   detailLabel: {
-    fontSize: theme.typography.fontSize.sm,
-    color: theme.colors.text.secondary,
-    fontWeight: theme.typography.fontWeight.medium,
+    fontSize: 14,
+    fontWeight: '500',
   },
   detailValue: {
-    fontSize: theme.typography.fontSize.sm,
-    color: theme.colors.text.primary,
+    fontSize: 14,
     flex: 1,
   },
   costValue: {
-    fontSize: theme.typography.fontSize.sm,
-    color: theme.colors.accent[600],
-    fontWeight: theme.typography.fontWeight.semibold,
+    fontSize: 14,
+    fontWeight: '600',
     flex: 1,
   },
 });

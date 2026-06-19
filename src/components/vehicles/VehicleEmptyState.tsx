@@ -7,20 +7,21 @@ import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import Button from '../Button';
-import theme from '../../theme';
+import { useTheme } from '../../hooks/useTheme';
 
 interface VehicleEmptyStateProps {
   onAddVehicle?: () => void;
 }
 
 export default function VehicleEmptyState({ onAddVehicle }: VehicleEmptyStateProps) {
+  const theme = useTheme();
   return (
     <View style={styles.container}>
-      <View style={styles.iconContainer}>
-        <Ionicons name="car-sport-outline" size={48} color={theme.colors.text.tertiary} />
+      <View style={[styles.iconContainer, { backgroundColor: theme.borderLight }]}>
+        <Ionicons name="car-sport-outline" size={48} color={theme.textMuted} />
       </View>
-      <Text style={styles.title}>Nenhum veículo cadastrado</Text>
-      <Text style={styles.subtitle}>
+      <Text style={[styles.title, { color: theme.text }]}>Nenhum veículo cadastrado</Text>
+      <Text style={[styles.subtitle, { color: theme.textMuted }]}>
         Cadastre seu primeiro veículo para começar a gerenciar manutenções e rotas.
       </Text>
       {onAddVehicle && (
@@ -39,29 +40,26 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    padding: theme.spacing.xl,
+    padding: 32,
   },
   iconContainer: {
     width: 80,
     height: 80,
     borderRadius: 40,
-    backgroundColor: theme.colors.background.tertiary,
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: theme.spacing.lg,
+    marginBottom: 24,
   },
   title: {
-    fontSize: theme.typography.fontSize.lg,
-    fontWeight: theme.typography.fontWeight.semibold,
-    color: theme.colors.text.primary,
-    marginBottom: theme.spacing.sm,
+    fontSize: 18,
+    fontWeight: '600',
+    marginBottom: 8,
     textAlign: 'center',
   },
   subtitle: {
-    fontSize: theme.typography.fontSize.md,
-    color: theme.colors.text.secondary,
+    fontSize: 16,
     textAlign: 'center',
-    marginBottom: theme.spacing.lg,
+    marginBottom: 24,
     lineHeight: 22,
   },
   button: {

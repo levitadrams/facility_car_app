@@ -16,7 +16,8 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useAuth } from '../../contexts/AuthContext';
 import Card from '../../components/Card';
 import Avatar from '../../components/Avatar';
-import theme from '../../theme';
+import { useTheme } from '../../hooks/useTheme';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { TabParamList } from '../../navigation/TabNavigator';
 
 interface MenuItemProps {
@@ -27,7 +28,7 @@ interface MenuItemProps {
   onPress: () => void;
 }
 
-function MenuItem({ icon, title, subtitle, color, onPress }: MenuItemProps) {
+function MenuItem({ icon, title, subtitle, color, onPress, theme }: MenuItemProps & { theme: ReturnType<typeof useTheme> }) {
   return (
     <Card variant="default" onPress={onPress} style={styles.menuCard}>
       <View style={styles.menuContent}>
@@ -35,10 +36,10 @@ function MenuItem({ icon, title, subtitle, color, onPress }: MenuItemProps) {
           <Ionicons name={icon} size={24} color={color} />
         </View>
         <View style={styles.menuText}>
-          <Text style={styles.menuTitle}>{title}</Text>
-          <Text style={styles.menuSubtitle}>{subtitle}</Text>
+          <Text style={[styles.menuTitle, { color: theme.text }]}>{title}</Text>
+          <Text style={[styles.menuSubtitle, { color: theme.textMuted }]}>{subtitle}</Text>
         </View>
-        <Ionicons name="chevron-forward" size={20} color={theme.colors.text.tertiary} />
+        <Ionicons name="chevron-forward" size={20} color={theme.textMuted} />
       </View>
     </Card>
   );
@@ -47,65 +48,67 @@ function MenuItem({ icon, title, subtitle, color, onPress }: MenuItemProps) {
 export default function MenuScreen() {
   const { user } = useAuth();
   const navigation = useNavigation<NativeStackNavigationProp<TabParamList>>();
+  const theme = useTheme();
+  const insets = useSafeAreaInsets();
 
   const menuItems = [
     {
       icon: 'car-sport-outline' as const,
       title: 'Meus Veículos',
       subtitle: 'Gerenciar veículos cadastrados',
-      color: theme.colors.primary[600],
+      color: theme.primary,
       onPress: () => navigation.navigate('Vehicles'),
     },
     {
       icon: 'construct-outline' as const,
       title: 'Manutenção',
       subtitle: 'Gestão de manutenções',
-      color: theme.colors.accent[600],
+      color: theme.accent,
       onPress: () => console.log('Manutenção'),
     },
     {
       icon: 'map-outline' as const,
       title: 'RotasGo',
       subtitle: 'Destinos e rotas otimizadas',
-      color: theme.colors.secondary[600],
+      color: theme.secondary,
       onPress: () => navigation.navigate('Destinations'),
     },
     {
       icon: 'document-text-outline' as const,
       title: 'Relatórios',
       subtitle: 'Ver relatórios e estatísticas',
-      color: theme.colors.info[600],
+      color: theme.info,
       onPress: () => console.log('Relatórios'),
     },
     {
       icon: 'notifications-outline' as const,
       title: 'Notificações',
       subtitle: 'Central de notificações',
-      color: theme.colors.warning[600],
+      color: theme.warning,
       onPress: () => console.log('Notificações'),
     },
   ];
 
   return (
-    <ScrollView style={styles.container}>
+    <ScrollView style={[styles.container, { backgroundColor: theme.background, paddingTop: insets.top, paddingBottom: insets.bottom }]}>
       {/* Header */}
-      <View style={styles.header}>
+      <View style={[styles.header, { backgroundColor: theme.surface, borderBottomColor: theme.border }]}>
         <View style={styles.headerContent}>
           <View>
-            <Text style={styles.greeting}>Olá,</Text>
-            <Text style={styles.userName}>{user?.name || 'Usuário'}</Text>
+            <Text style={[styles.greeting, { color: theme.textMuted }]}>Olá,</Text>
+            <Text style={[styles.userName, { color: theme.text }]}>{user?.name || 'Usuário'}</Text>
           </View>
           <Avatar
             name={user?.name}
             size="md"
-            backgroundColor={theme.colors.primary[600]}
+            backgroundColor={theme.primary}
           />
         </View>
       </View>
 
       {/* Menu Items */}
       <View style={styles.menuContainer}>
-        <Text style={styles.sectionTitle}>Menu Principal</Text>
+        <Text style={[styles.sectionTitle, { color: theme.text }]}>Menu Principal</Text>
         {menuItems.map((item, index) => (
           <MenuItem
             key={index}
@@ -114,6 +117,7 @@ export default function MenuScreen() {
             subtitle={item.subtitle}
             color={item.color}
             onPress={item.onPress}
+            theme={theme}
           />
         ))}
       </View>
@@ -124,15 +128,12 @@ export default function MenuScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: theme.colors.background.secondary,
   },
   header: {
-    backgroundColor: theme.colors.white,
-    paddingHorizontal: theme.layout.containerPadding,
-    paddingTop: theme.spacing.xl,
-    paddingBottom: theme.spacing.lg,
+    paddingHorizontal: 24,
+    paddingTop: 32,
+    paddingBottom: 24,
     borderBottomWidth: 1,
-    borderBottomColor: theme.colors.border.light,
   },
   headerContent: {
     flexDirection: 'row',
@@ -140,26 +141,23 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   greeting: {
-    fontSize: theme.typography.fontSize.md,
-    color: theme.colors.text.secondary,
-    marginBottom: theme.spacing.xs,
+    fontSize: 16,
+    marginBottom: 4,
   },
   userName: {
-    fontSize: theme.typography.fontSize.xl,
-    fontWeight: theme.typography.fontWeight.bold,
-    color: theme.colors.text.primary,
+    fontSize: 20,
+    fontWeight: '700',
   },
   menuContainer: {
-    padding: theme.layout.containerPadding,
+    padding: 24,
   },
   sectionTitle: {
-    fontSize: theme.typography.fontSize.lg,
-    fontWeight: theme.typography.fontWeight.semibold,
-    color: theme.colors.text.primary,
-    marginBottom: theme.spacing.md,
+    fontSize: 18,
+    fontWeight: '600',
+    marginBottom: 16,
   },
   menuCard: {
-    marginBottom: theme.spacing.md,
+    marginBottom: 16,
   },
   menuContent: {
     flexDirection: 'row',
@@ -168,22 +166,20 @@ const styles = StyleSheet.create({
   iconContainer: {
     width: 48,
     height: 48,
-    borderRadius: theme.borderRadius.md,
+    borderRadius: 8,
     justifyContent: 'center',
     alignItems: 'center',
   },
   menuText: {
     flex: 1,
-    marginLeft: theme.spacing.md,
+    marginLeft: 16,
   },
   menuTitle: {
-    fontSize: theme.typography.fontSize.md,
-    fontWeight: theme.typography.fontWeight.semibold,
-    color: theme.colors.text.primary,
-    marginBottom: theme.spacing.xs,
+    fontSize: 16,
+    fontWeight: '600',
+    marginBottom: 4,
   },
   menuSubtitle: {
-    fontSize: theme.typography.fontSize.sm,
-    color: theme.colors.text.secondary,
+    fontSize: 14,
   },
 });

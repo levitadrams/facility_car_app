@@ -25,7 +25,8 @@ import Button from '../../components/Button';
 import PasswordRequirements from '../../components/PasswordRequirements';
 import InputMask from '../../components/InputMask';
 import { maskPhone, unmaskPhone, maskCPF, unmaskCPF } from '../../utils/masks';
-import theme from '../../theme';
+import { useTheme } from '../../hooks/useTheme';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 /**
  * Schema de validação com Zod
@@ -67,6 +68,8 @@ export default function RegisterScreen() {
   const navigation = useNavigation<NavigationProp<AuthStackParamList>>();
   const [loading, setLoading] = useState(false);
   const [passwordValue, setPasswordValue] = useState('');
+  const theme = useTheme();
+  const insets = useSafeAreaInsets();
 
   const {
     control,
@@ -114,7 +117,14 @@ export default function RegisterScreen() {
 
   return (
     <KeyboardAvoidingView
-      style={styles.container}
+      style={[
+        styles.container,
+        {
+          backgroundColor: theme.background,
+          paddingTop: insets.top,
+          paddingBottom: insets.bottom,
+        },
+      ]}
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
     >
       <ScrollView
@@ -124,8 +134,8 @@ export default function RegisterScreen() {
         <View style={styles.content}>
           {/* Header */}
           <View style={styles.header}>
-            <Text style={styles.title}>Driver Control</Text>
-            <Text style={styles.subtitle}>Crie sua conta para começar</Text>
+            <Text style={[styles.title, { color: theme.text }]}>Driver Control</Text>
+            <Text style={[styles.subtitle, { color: theme.textMuted }]}>Crie sua conta para começar</Text>
           </View>
 
           {/* Form */}
@@ -268,7 +278,7 @@ export default function RegisterScreen() {
               disabled={loading}
               onPress={() => navigation.navigate('Login')}
             >
-              <Text style={styles.link}>Já tenho uma conta</Text>
+              <Text style={[styles.link, { color: theme.primary }]}>Já tenho uma conta</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -280,43 +290,39 @@ export default function RegisterScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: theme.colors.background.secondary,
   },
   scrollContent: {
     flexGrow: 1,
   },
   content: {
     flex: 1,
-    paddingHorizontal: theme.layout.containerPadding,
-    paddingTop: theme.spacing.xxxl,
-    paddingBottom: theme.layout.containerPadding,
+    paddingHorizontal: 24,
+    paddingTop: 16,
+    paddingBottom: 16,
   },
   header: {
-    marginBottom: theme.spacing.xxl,
+    marginBottom: 40,
   },
   title: {
-    fontSize: theme.typography.fontSize.xxxl,
-    fontWeight: theme.typography.fontWeight.bold,
-    color: theme.colors.text.primary,
-    marginBottom: theme.spacing.xs,
+    fontSize: 32,
+    fontWeight: '700',
+    marginBottom: 4,
   },
   subtitle: {
-    fontSize: theme.typography.fontSize.md,
-    color: theme.colors.text.secondary,
+    fontSize: 16,
   },
   form: {
-    marginBottom: theme.spacing.lg,
+    marginBottom: 24,
   },
   button: {
-    marginTop: theme.spacing.sm,
+    marginTop: 8,
   },
   linksContainer: {
     alignItems: 'center',
-    gap: theme.spacing.md,
+    gap: 16,
   },
   link: {
-    fontSize: theme.typography.fontSize.sm,
-    color: theme.colors.primary[600],
-    fontWeight: theme.typography.fontWeight.medium,
+    fontSize: 14,
+    fontWeight: '500',
   },
 });

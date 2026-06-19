@@ -33,7 +33,8 @@ import Input from '../../components/Input';
 import Button from '../../components/Button';
 import AutocompleteInput from '../../components/Autocomplete/AutocompleteInput';
 import SelectInput from '../../components/SelectInput/SelectInput';
-import theme from '../../theme';
+import { useTheme } from '../../hooks/useTheme';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const currentYear = new Date().getFullYear();
 
@@ -63,6 +64,8 @@ export default function VehicleFormScreen() {
   const route = useRoute<RouteProps>();
   const vehicle = route.params?.vehicle;
   const isEdit = !!vehicle;
+  const theme = useTheme();
+  const insets = useSafeAreaInsets();
 
   const [loading, setLoading] = useState(false);
   const [selectedBrand, setSelectedBrand] = useState<Brand | null>(
@@ -204,7 +207,14 @@ export default function VehicleFormScreen() {
 
   return (
     <KeyboardAvoidingView
-      style={styles.container}
+      style={[
+        styles.container,
+        {
+          backgroundColor: theme.background,
+          paddingTop: insets.top,
+          paddingBottom: insets.bottom,
+        },
+      ]}
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
     >
       <ScrollView
@@ -212,11 +222,11 @@ export default function VehicleFormScreen() {
         keyboardShouldPersistTaps="handled"
       >
         {/* Header */}
-        <View style={styles.header}>
+        <View style={[styles.header, { backgroundColor: theme.surface, borderBottomColor: theme.border }]}>
           <TouchableOpacity onPress={() => navigation.goBack()}>
-            <Ionicons name="arrow-back" size={24} color={theme.colors.text.primary} />
+            <Ionicons name="arrow-back" size={24} color={theme.text} />
           </TouchableOpacity>
-          <Text style={styles.title}>
+          <Text style={[styles.title, { color: theme.text }]}>
             {isEdit ? 'Editar Veículo' : 'Novo Veículo'}
           </Text>
           <View style={styles.headerSpacer} />
@@ -371,35 +381,31 @@ export default function VehicleFormScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: theme.colors.background.secondary,
   },
   scrollContent: {
-    paddingBottom: theme.spacing.xl,
+    paddingBottom: 32,
   },
   header: {
-    backgroundColor: theme.colors.white,
-    paddingHorizontal: theme.layout.containerPadding,
-    paddingTop: theme.spacing.xl,
-    paddingBottom: theme.spacing.lg,
+    paddingHorizontal: 24,
+    paddingTop: 32,
+    paddingBottom: 24,
     flexDirection: 'row',
     alignItems: 'center',
     borderBottomWidth: 1,
-    borderBottomColor: theme.colors.border.light,
   },
   title: {
     flex: 1,
-    fontSize: theme.typography.fontSize.xl,
-    fontWeight: theme.typography.fontWeight.bold,
-    color: theme.colors.text.primary,
+    fontSize: 20,
+    fontWeight: '700',
     textAlign: 'center',
   },
   headerSpacer: {
     width: 24,
   },
   form: {
-    padding: theme.layout.containerPadding,
+    padding: 24,
   },
   submitButton: {
-    marginTop: theme.spacing.md,
+    marginTop: 16,
   },
 });

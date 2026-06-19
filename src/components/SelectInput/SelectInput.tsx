@@ -9,7 +9,7 @@ import {
   Pressable,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import theme from '../../theme';
+import { useTheme } from '../../hooks/useTheme';
 
 interface SelectInputProps<T> {
   label: string;
@@ -33,6 +33,7 @@ export default function SelectInput<T>({
   error,
 }: SelectInputProps<T>) {
   const [modalVisible, setModalVisible] = useState(false);
+  const theme = useTheme();
 
   const handleSelect = (item: T) => {
     onSelect(item);
@@ -47,11 +48,11 @@ export default function SelectInput<T>({
 
   return (
     <View style={styles.container}>
-      {label && <Text style={styles.label}>{label}</Text>}
+      {label && <Text style={[styles.label, { color: theme.text }]}>{label}</Text>}
       <TouchableOpacity
         style={[
           styles.inputContainer,
-          error ? styles.inputError : null,
+          { borderColor: error ? theme.danger : theme.inputBorder, backgroundColor: disabled ? theme.background : theme.inputBg },
           disabled ? styles.inputDisabled : null,
         ]}
         onPress={() => !disabled && setModalVisible(true)}
@@ -60,7 +61,7 @@ export default function SelectInput<T>({
         <Text
           style={[
             styles.inputText,
-            !displayValue && styles.placeholder,
+            { color: displayValue ? theme.text : theme.textMuted },
           ]}
           numberOfLines={1}
         >
@@ -68,13 +69,13 @@ export default function SelectInput<T>({
         </Text>
         {displayValue && !disabled ? (
           <TouchableOpacity onPress={handleClear} hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}>
-            <Ionicons name="close-circle" size={20} color={theme.colors.text.tertiary} />
+            <Ionicons name="close-circle" size={20} color={theme.textMuted} />
           </TouchableOpacity>
         ) : (
-          <Ionicons name="chevron-down" size={20} color={theme.colors.text.tertiary} />
+          <Ionicons name="chevron-down" size={20} color={theme.textMuted} />
         )}
       </TouchableOpacity>
-      {error && <Text style={styles.errorText}>{error}</Text>}
+      {error && <Text style={[styles.errorText, { color: theme.danger }]}>{error}</Text>}
 
       <Modal
         visible={modalVisible}
@@ -83,11 +84,11 @@ export default function SelectInput<T>({
         onRequestClose={() => setModalVisible(false)}
       >
         <Pressable style={styles.overlay} onPress={() => setModalVisible(false)}>
-          <View style={styles.modalContent}>
-            <View style={styles.modalHeader}>
-              <Text style={styles.modalTitle}>{label}</Text>
+          <View style={[styles.modalContent, { backgroundColor: theme.surface }]}>
+            <View style={[styles.modalHeader, { borderBottomColor: theme.border }]}>
+              <Text style={[styles.modalTitle, { color: theme.text }]}>{label}</Text>
               <TouchableOpacity onPress={() => setModalVisible(false)}>
-                <Ionicons name="close" size={24} color={theme.colors.text.primary} />
+                <Ionicons name="close" size={24} color={theme.text} />
               </TouchableOpacity>
             </View>
             <FlatList
@@ -98,12 +99,12 @@ export default function SelectInput<T>({
                   style={styles.optionItem}
                   onPress={() => handleSelect(item)}
                 >
-                  <Text style={styles.optionText}>{getOptionLabel(item)}</Text>
+                  <Text style={[styles.optionText, { color: theme.text }]}>{getOptionLabel(item)}</Text>
                 </TouchableOpacity>
               )}
-              ItemSeparatorComponent={() => <View style={styles.separator} />}
+              ItemSeparatorComponent={() => <View style={[styles.separator, { backgroundColor: theme.border }]} />}
               ListEmptyComponent={
-                <Text style={styles.emptyText}>Nenhuma opção disponível</Text>
+                <Text style={[styles.emptyText, { color: theme.textMuted }]}>Nenhuma opção disponível</Text>
               }
             />
           </View>
@@ -115,43 +116,31 @@ export default function SelectInput<T>({
 
 const styles = StyleSheet.create({
   container: {
-    marginBottom: theme.spacing.md,
+    marginBottom: 16,
   },
   label: {
-    fontSize: theme.typography.fontSize.sm,
-    fontWeight: theme.typography.fontWeight.medium,
-    color: theme.colors.text.primary,
-    marginBottom: theme.spacing.xs,
+    fontSize: 14,
+    fontWeight: '500',
+    marginBottom: 4,
   },
   inputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: theme.colors.border.light,
-    borderRadius: theme.borderRadius.md,
-    backgroundColor: theme.colors.white,
-    paddingHorizontal: theme.spacing.md,
-    minHeight: theme.layout.inputHeight,
-  },
-  inputError: {
-    borderColor: theme.colors.danger[500],
+    borderRadius: 8,
+    paddingHorizontal: 16,
+    minHeight: 50,
   },
   inputDisabled: {
-    backgroundColor: theme.colors.background.tertiary,
-    borderColor: theme.colors.border.light,
+    opacity: 0.6,
   },
   inputText: {
     flex: 1,
-    fontSize: theme.typography.fontSize.md,
-    color: theme.colors.text.primary,
-  },
-  placeholder: {
-    color: theme.colors.text.tertiary,
+    fontSize: 16,
   },
   errorText: {
-    fontSize: theme.typography.fontSize.sm,
-    color: theme.colors.danger[600],
-    marginTop: theme.spacing.xs,
+    fontSize: 14,
+    marginTop: 4,
   },
   overlay: {
     flex: 1,
@@ -159,42 +148,36 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0,0,0,0.4)',
   },
   modalContent: {
-    backgroundColor: theme.colors.white,
-    borderTopLeftRadius: theme.borderRadius.xl,
-    borderTopRightRadius: theme.borderRadius.xl,
+    borderTopLeftRadius: 16,
+    borderTopRightRadius: 16,
     maxHeight: '70%',
-    paddingBottom: theme.spacing.xl,
+    paddingBottom: 32,
   },
   modalHeader: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    padding: theme.spacing.lg,
+    padding: 24,
     borderBottomWidth: 1,
-    borderBottomColor: theme.colors.border.light,
   },
   modalTitle: {
-    fontSize: theme.typography.fontSize.lg,
-    fontWeight: theme.typography.fontWeight.semibold,
-    color: theme.colors.text.primary,
+    fontSize: 18,
+    fontWeight: '600',
   },
   optionItem: {
-    paddingVertical: theme.spacing.md,
-    paddingHorizontal: theme.spacing.lg,
+    paddingVertical: 16,
+    paddingHorizontal: 24,
   },
   optionText: {
-    fontSize: theme.typography.fontSize.md,
-    color: theme.colors.text.primary,
+    fontSize: 16,
   },
   separator: {
     height: 1,
-    backgroundColor: theme.colors.border.light,
-    marginHorizontal: theme.spacing.lg,
+    marginHorizontal: 24,
   },
   emptyText: {
-    padding: theme.spacing.xl,
+    padding: 32,
     textAlign: 'center',
-    color: theme.colors.text.secondary,
-    fontSize: theme.typography.fontSize.md,
+    fontSize: 16,
   },
 });

@@ -23,12 +23,15 @@ import VehicleCard from '../../components/vehicles/VehicleCard';
 import VehicleEmptyState from '../../components/vehicles/VehicleEmptyState';
 import ConfirmDeleteModal from '../../components/vehicles/ConfirmDeleteModal';
 import Input from '../../components/Input';
-import theme from '../../theme';
+import { useTheme } from '../../hooks/useTheme';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 type NavigationProp = NativeStackNavigationProp<VehiclesStackParamList>;
 
 export default function VehicleListScreen() {
   const navigation = useNavigation<NavigationProp>();
+  const theme = useTheme();
+  const insets = useSafeAreaInsets();
   const [vehicles, setVehicles] = useState<Vehicle[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -103,14 +106,14 @@ export default function VehicleListScreen() {
   );
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: theme.background, paddingTop: insets.top, paddingBottom: insets.bottom }]}>
       {/* Header */}
-      <View style={styles.header}>
-        <Text style={styles.title}>Meus Veículos</Text>
+      <View style={[styles.header, { backgroundColor: theme.surface, borderBottomColor: theme.border }]}>
+        <Text style={[styles.title, { color: theme.text }]}>Meus Veículos</Text>
       </View>
 
       {/* Search */}
-      <View style={styles.searchContainer}>
+      <View style={[styles.searchContainer, { backgroundColor: theme.surface }]}>
         <View style={styles.searchInputWrapper}>
           <Input
             placeholder="Buscar por placa, marca ou modelo"
@@ -121,8 +124,8 @@ export default function VehicleListScreen() {
             containerStyle={styles.searchInputContainer}
           />
         </View>
-        <TouchableOpacity style={styles.searchButton} onPress={handleSearch} activeOpacity={0.7}>
-          <Ionicons name="search" size={22} color={theme.colors.white} />
+        <TouchableOpacity style={[styles.searchButton, { backgroundColor: theme.primary }]} onPress={handleSearch} activeOpacity={0.7}>
+          <Ionicons name="search" size={22} color={theme.textInverse} />
         </TouchableOpacity>
       </View>
 
@@ -146,11 +149,11 @@ export default function VehicleListScreen() {
 
       {/* FAB */}
       <TouchableOpacity
-        style={styles.fab}
+        style={[styles.fab, { backgroundColor: theme.fab }]}
         onPress={() => navigation.navigate('VehicleForm')}
         activeOpacity={0.85}
       >
-        <Ionicons name="add" size={28} color={theme.colors.white} />
+        <Ionicons name="add" size={28} color={theme.textInverse} />
       </TouchableOpacity>
 
       {/* Confirm Delete Modal */}
@@ -170,47 +173,41 @@ export default function VehicleListScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: theme.colors.background.secondary,
   },
   header: {
-    backgroundColor: theme.colors.white,
-    paddingHorizontal: theme.layout.containerPadding,
-    paddingTop: theme.spacing.xl,
-    paddingBottom: theme.spacing.lg,
+    paddingHorizontal: 24,
+    paddingTop: 32,
+    paddingBottom: 24,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     borderBottomWidth: 1,
-    borderBottomColor: theme.colors.border.light,
   },
   title: {
-    fontSize: theme.typography.fontSize.xxl,
-    fontWeight: theme.typography.fontWeight.bold,
-    color: theme.colors.text.primary,
+    fontSize: 24,
+    fontWeight: '700',
   },
   fab: {
     position: 'absolute',
-    right: theme.spacing.lg,
-    bottom: theme.spacing.xl,
+    right: 24,
+    bottom: 32,
     width: 56,
     height: 56,
     borderRadius: 28,
-    backgroundColor: theme.colors.primary[600],
     justifyContent: 'center',
     alignItems: 'center',
-    shadowColor: theme.colors.black || '#000',
+    shadowColor: '#000',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.25,
     shadowRadius: 8,
     elevation: 6,
   },
   searchContainer: {
-    backgroundColor: theme.colors.white,
-    paddingHorizontal: theme.layout.containerPadding,
-    paddingVertical: theme.spacing.lg,
+    paddingHorizontal: 24,
+    paddingVertical: 24,
     flexDirection: 'row',
     alignItems: 'center',
-    gap: theme.spacing.sm,
+    gap: 8,
   },
   searchInputWrapper: {
     flex: 1,
@@ -221,12 +218,11 @@ const styles = StyleSheet.create({
   searchButton: {
     width: 48,
     height: 48,
-    borderRadius: theme.borderRadius.md,
-    backgroundColor: theme.colors.primary[600],
+    borderRadius: 8,
     justifyContent: 'center',
     alignItems: 'center',
   },
   list: {
-    padding: theme.layout.containerPadding,
+    padding: 24,
   },
 });

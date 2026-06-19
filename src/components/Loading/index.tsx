@@ -10,7 +10,7 @@ import {
   StyleSheet,
   Text,
 } from 'react-native';
-import theme from '../../theme';
+import { useTheme } from '../../hooks/useTheme';
 
 interface LoadingProps {
   message?: string;
@@ -18,10 +18,11 @@ interface LoadingProps {
 }
 
 export default function Loading({ message, color }: LoadingProps) {
+  const theme = useTheme();
   return (
-    <View style={styles.container}>
-      <ActivityIndicator size="large" color={color || theme.colors.primary[600]} />
-      {message && <Text style={styles.message}>{message}</Text>}
+    <View style={[styles.container, { backgroundColor: theme.background }]}>
+      <ActivityIndicator size="large" color={color || theme.primary} />
+      {message && <Text style={[styles.message, { color: theme.textMuted }]}>{message}</Text>}
     </View>
   );
 }
@@ -31,12 +32,10 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: theme.colors.background.primary,
   },
   message: {
-    marginTop: theme.spacing.md,
-    fontSize: theme.typography.fontSize.md,
-    color: theme.colors.text.secondary,
-    fontWeight: theme.typography.fontWeight.medium,
+    marginTop: 16,
+    fontSize: 16,
+    fontWeight: '500',
   },
 });

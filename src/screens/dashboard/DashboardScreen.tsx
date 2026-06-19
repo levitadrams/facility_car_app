@@ -14,10 +14,13 @@ import { useAuth } from '../../contexts/AuthContext';
 import Button from '../../components/Button';
 import Card from '../../components/Card';
 import Avatar from '../../components/Avatar';
-import theme from '../../theme';
+import { useTheme } from '../../hooks/useTheme';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export default function DashboardScreen() {
   const { user, signOut } = useAuth();
+  const theme = useTheme();
+  const insets = useSafeAreaInsets();
 
   /**
    * Confirma e realiza o logout
@@ -50,25 +53,25 @@ export default function DashboardScreen() {
   }
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: theme.background, paddingTop: insets.top, paddingBottom: insets.bottom }]}>
       <View style={styles.content}>
         {/* Header */}
         <View style={styles.header}>
-          <Text style={styles.title}>Dashboard</Text>
-          <Text style={styles.welcome}>Bem-vindo(a)!</Text>
+          <Text style={[styles.title, { color: theme.text }]}>Dashboard</Text>
+          <Text style={[styles.welcome, { color: theme.textMuted }]}>Bem-vindo(a)!</Text>
         </View>
 
         {/* User Info Card */}
         <Card variant="elevated" style={styles.userCard}>
           <View style={styles.userHeader}>
-            <Avatar 
-              name={user?.name} 
+            <Avatar
+              name={user?.name}
               size="lg"
-              backgroundColor={theme.colors.primary[600]}
+              backgroundColor={theme.primary}
             />
             <View style={styles.userTextContainer}>
-              <Text style={styles.userName}>{user?.name}</Text>
-              <Text style={styles.userEmail}>{user?.email}</Text>
+              <Text style={[styles.userName, { color: theme.text }]}>{user?.name}</Text>
+              <Text style={[styles.userEmail, { color: theme.textMuted }]}>{user?.email}</Text>
             </View>
           </View>
         </Card>
@@ -89,47 +92,42 @@ export default function DashboardScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: theme.colors.background.secondary,
   },
   content: {
     flex: 1,
-    paddingHorizontal: theme.layout.containerPadding,
-    paddingTop: theme.spacing.xxxl,
-    paddingBottom: theme.layout.containerPadding,
+    paddingHorizontal: 24,
+    paddingTop: 64,
+    paddingBottom: 24,
   },
   header: {
-    marginBottom: theme.spacing.xl,
+    marginBottom: 32,
   },
   title: {
-    fontSize: theme.typography.fontSize.xxxl,
-    fontWeight: theme.typography.fontWeight.bold,
-    color: theme.colors.text.primary,
-    marginBottom: theme.spacing.xs,
+    fontSize: 32,
+    fontWeight: '700',
+    marginBottom: 4,
   },
   welcome: {
-    fontSize: theme.typography.fontSize.lg,
-    color: theme.colors.text.secondary,
+    fontSize: 18,
   },
   userCard: {
-    marginBottom: theme.spacing.lg,
+    marginBottom: 24,
   },
   userHeader: {
     flexDirection: 'row',
     alignItems: 'center',
   },
   userTextContainer: {
-    marginLeft: theme.spacing.md,
+    marginLeft: 16,
     flex: 1,
   },
   userName: {
-    fontSize: theme.typography.fontSize.lg,
-    fontWeight: theme.typography.fontWeight.semibold,
-    color: theme.colors.text.primary,
-    marginBottom: theme.spacing.xxs,
+    fontSize: 18,
+    fontWeight: '600',
+    marginBottom: 2,
   },
   userEmail: {
-    fontSize: theme.typography.fontSize.sm,
-    color: theme.colors.text.secondary,
+    fontSize: 14,
   },
   actions: {
     marginTop: 'auto',
