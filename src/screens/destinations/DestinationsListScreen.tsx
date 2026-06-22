@@ -18,6 +18,7 @@ import * as Location from 'expo-location';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { DestinationsStackParamList } from '../../navigation/DestinationsStack';
 import Card from '../../components/Card';
 import Button from '../../components/Button';
 import Badge from '../../components/Badge';
@@ -26,7 +27,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { getDestinations, deleteDestination, calculateRouteWithEstimate } from '../../services/destinationService';
 import { DestinationWithDistance, RouteDestination } from '../../types/destination';
 
-type NavigationProp = NativeStackNavigationProp<any>;
+type NavigationProp = NativeStackNavigationProp<DestinationsStackParamList>;
 
 export default function DestinationsListScreen() {
   const navigation = useNavigation<NavigationProp>();
@@ -128,6 +129,15 @@ export default function DestinationsListScreen() {
     navigation.navigate('RouteDestinationForm', { destination });
   }, [navigation]);
 
+  const handleViewRoute = useCallback((destination: RouteDestination) => {
+    navigation.navigate('RouteMap', {
+      destinationId: destination.id,
+      destinationName: destination.name,
+      destinationLatitude: Number(destination.latitude),
+      destinationLongitude: Number(destination.longitude),
+    });
+  }, [navigation]);
+
   const handleDelete = useCallback((destination: RouteDestination) => {
     Alert.alert(
       'Excluir Destino',
@@ -162,12 +172,12 @@ export default function DestinationsListScreen() {
           <View style={styles.cardInfo}>
             <View style={styles.nameRow}>
               <Ionicons name="location" size={20} color={theme.primary} />
-              <Text style={[styles.cardTitle, { color: theme.text }]}>{item.name}</Text>
+              <Text style={[styles.cardTitle, { color: theme.text }]} numberOfLines={1} ellipsizeMode="tail">{item.name}</Text>
             </View>
           </View>
           <TouchableOpacity
             onPress={() => handleEdit(item)}
-            style={[styles.editButton, { backgroundColor: theme.primaryLight }]}
+            style={[styles.editButton, { backgroundColor: theme.secondary }]}
             activeOpacity={0.7}
           >
             <Ionicons name="create-outline" size={22} color={theme.primary} />
@@ -204,9 +214,19 @@ export default function DestinationsListScreen() {
             )}
           </View>
         )}
+
+        {/* Botão Ver Rota */}
+        <TouchableOpacity
+          style={[styles.routeButton, { backgroundColor: theme.primary }]}
+          onPress={() => handleViewRoute(item)}
+          activeOpacity={0.8}
+        >
+          <Ionicons name="map-outline" size={18} color={theme.textInverse} />
+          <Text style={[styles.routeButtonText, { color: theme.textInverse }]}>Ver Rota</Text>
+        </TouchableOpacity>
       </Card>
     ),
-    [handleEdit, handleDelete]
+    [handleEdit, handleDelete, handleViewRoute, theme]
   );
 
   return (
@@ -217,11 +237,12 @@ export default function DestinationsListScreen() {
           <Text style={[styles.title, { color: theme.text }]}>Rotas Inteligentes</Text>
           <TouchableOpacity
             onPress={handleRefresh}
-            style={[styles.refreshButton, { backgroundColor: theme.primary }]}
+            style={[styles.refreshButton, { backgroundColor: theme.primary, marginLeft: 65, marginTop: 10 }]}
             activeOpacity={0.7}
           >
             <Ionicons name="refresh" size={24} color={theme.textInverse} />
           </TouchableOpacity>
+          <View style={styles.headerSpacer} />
         </View>
 
         {userLocation && (
@@ -291,6 +312,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
   },
+  headerSpacer: {
+    width: 10,
+  },
   refreshButton: {
     width: 48,
     height: 48,
@@ -353,6 +377,7 @@ const styles = StyleSheet.create({
   cardTitle: {
     fontSize: 18,
     fontWeight: '700',
+    flexShrink: 1,
   },
   editButton: {
     width: 40,
@@ -381,6 +406,19 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '400',
     textDecorationLine: 'line-through',
+  },
+  routeButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+    marginTop: 16,
+    paddingVertical: 12,
+    borderRadius: 10,
+  },
+  routeButtonText: {
+    fontSize: 14,
+    fontWeight: '600',
   },
   center: {
     flex: 1,

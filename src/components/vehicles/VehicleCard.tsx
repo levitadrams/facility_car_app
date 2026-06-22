@@ -29,7 +29,7 @@ export default function VehicleCard({ vehicle, onPress, onEdit, onDelete }: Vehi
   return (
     <TouchableOpacity style={[styles.card, { backgroundColor: theme.cardBg, borderColor: theme.border }]} onPress={onPress} activeOpacity={0.8}>
       <View style={styles.header}>
-        <View style={[styles.iconContainer, { backgroundColor: theme.primaryLight }]}>
+        <View style={[styles.iconContainer, { backgroundColor: theme.secondary }]}>
           <Ionicons name="car-sport" size={24} color={theme.primary} />
         </View>
         <View style={styles.info}>

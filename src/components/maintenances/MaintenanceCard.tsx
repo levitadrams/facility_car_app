@@ -40,13 +40,13 @@ export default function MaintenanceCard({ maintenance, onPress, onEdit, onDelete
       activeOpacity={0.8}
     >
       <View style={styles.header}>
-        <View style={[styles.iconContainer, { backgroundColor: theme.primaryLight }]}>
+        <View style={[styles.iconContainer, { backgroundColor: theme.secondary }]}>
           <Ionicons name="construct" size={24} color={theme.primary} />
         </View>
         <View style={styles.info}>
           <Text style={[styles.name, { color: theme.text }]}>{vehicleName}</Text>
           {vehiclePlate ? (
-            <Text style={[styles.plate, { color: theme.textMuted }]}>{vehiclePlate}</Text>
+            <Text style={[styles.plate, { color: theme.textMuted }]}>Placa: {vehiclePlate}</Text>
           ) : null}
         </View>
       </View>
