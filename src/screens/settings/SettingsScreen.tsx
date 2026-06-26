@@ -3,15 +3,18 @@
  * Quarta tab - Configurações e perfil do usuário
  */
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
   StyleSheet,
   ScrollView,
   Alert,
+  Switch,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as LocalAuthentication from 'expo-local-authentication';
 import { useAuth } from '../../contexts/AuthContext';
 import { useThemeContext } from '../../contexts/ThemeContext';
 import Card from '../../components/Card';
@@ -19,6 +22,7 @@ import Avatar from '../../components/Avatar';
 import Button from '../../components/Button';
 import { useTheme } from '../../hooks/useTheme';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { biometricsConfig } from '../../config/biometrics';
 
 interface SettingItemProps {
   icon: keyof typeof Ionicons.glyphMap;
@@ -55,11 +59,105 @@ function SettingItem({ icon, title, subtitle, onPress, danger, theme }: SettingI
   );
 }
 
+interface SettingToggleProps {
+  icon: keyof typeof Ionicons.glyphMap;
+  title: string;
+  subtitle?: string;
+  value: boolean;
+  onValueChange: (value: boolean) => void;
+  disabled?: boolean;
+}
+
+function SettingToggle({ icon, title, subtitle, value, onValueChange, disabled, theme }: SettingToggleProps & { theme: ReturnType<typeof useTheme> }) {
+  return (
+    <Card variant="default" style={[styles.settingCard, ...(disabled ? [styles.settingDisabled] : [])]}>
+      <View style={styles.settingContent}>
+        <Ionicons
+          name={icon}
+          size={24}
+          color={disabled ? theme.textMuted : theme.textMuted}
+        />
+        <View style={styles.settingText}>
+          <Text style={[styles.settingTitle, { color: disabled ? theme.textMuted : theme.text }]}>
+            {title}
+          </Text>
+          {subtitle && (
+            <Text style={[styles.settingSubtitle, { color: theme.textMuted }]}>{subtitle}</Text>
+          )}
+        </View>
+        <Switch
+          value={value}
+          onValueChange={onValueChange}
+          disabled={disabled}
+          trackColor={{ false: theme.border, true: theme.primary }}
+          thumbColor={value ? theme.primary : theme.textMuted}
+        />
+      </View>
+    </Card>
+  );
+}
+
 export default function SettingsScreen() {
   const { user, signOut } = useAuth();
   const theme = useTheme();
   const insets = useSafeAreaInsets();
   const { themeMode, setThemeMode } = useThemeContext();
+
+  // Estado da biometria
+  const [biometricsEnabled, setBiometricsEnabled] = useState(false);
+  const [hasBiometricHardware, setHasBiometricHardware] = useState(false);
+
+  // Carrega estado inicial da biometria
+  useEffect(() => {
+    async function loadBiometricState() {
+      try {
+        const hardware = await LocalAuthentication.hasHardwareAsync();
+        setHasBiometricHardware(hardware);
+
+        if (hardware) {
+          const saved = await AsyncStorage.getItem(biometricsConfig.storageKey);
+          setBiometricsEnabled(saved === 'true');
+        }
+      } catch {
+        // Falha silenciosa
+      }
+    }
+
+    loadBiometricState();
+  }, []);
+
+  // Alterna estado da biometria
+  async function toggleBiometrics(value: boolean) {
+    if (value) {
+      // Ao ativar, pede confirmação biométrica imediata
+      try {
+        const result = await LocalAuthentication.authenticateAsync({
+          promptMessage: 'Confirme sua identidade para ativar a biometria',
+          cancelLabel: 'Cancelar',
+        });
+
+        if (result.success) {
+          await AsyncStorage.setItem(biometricsConfig.storageKey, 'true');
+          setBiometricsEnabled(true);
+          Alert.alert('Biometria Ativada', 'O app tentará login automático com biometria ao iniciar.');
+        } else {
+          // Usuário cancelou — não ativa
+        }
+      } catch {
+        Alert.alert('Erro', 'Não foi possível ativar a biometria.');
+      }
+    } else {
+      // Ao desativar, remove a chave
+      try {
+        await AsyncStorage.removeItem(biometricsConfig.storageKey);
+        await AsyncStorage.removeItem(biometricsConfig.emailKey);
+        await AsyncStorage.removeItem(biometricsConfig.passwordKey);
+        setBiometricsEnabled(false);
+      } catch {
+        // Falha silenciosa
+      }
+    }
+  }
 
   const themeLabels: Record<string, string> = {
     light: 'Claro',
@@ -162,11 +260,16 @@ export default function SettingsScreen() {
           theme={theme}
         />
 
-        <SettingItem
-          icon="shield-checkmark-outline"
-          title="Privacidade"
-          subtitle="Configurações de privacidade"
-          onPress={() => console.log('Privacy')}
+        <SettingToggle
+          icon="finger-print-outline"
+          title="Desbloqueio por biometria"
+          subtitle={hasBiometricHardware
+            ? (biometricsEnabled ? 'Ativado' : 'Desativado')
+            : 'Não disponível neste dispositivo'
+          }
+          value={biometricsEnabled}
+          onValueChange={toggleBiometrics}
+          disabled={!hasBiometricHardware}
           theme={theme}
         />
       </View>
@@ -281,6 +384,9 @@ const styles = StyleSheet.create({
   },
   settingCard: {
     marginBottom: 8,
+  },
+  settingDisabled: {
+    opacity: 0.5,
   },
   settingContent: {
     flexDirection: 'row',
