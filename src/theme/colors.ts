@@ -76,7 +76,7 @@ const light: ThemeColors = {
 };
 
 const dark: ThemeColors = {
-  background: '#1C1C1E',
+  background: '#3A3A3C',
   surface: '#1C1C1E',
   surfaceHighlight: '#2C2C2E',
   primary: '#FBBF24',
@@ -86,7 +86,7 @@ const dark: ThemeColors = {
   text: '#FFFFFF',
   textMuted: '#A1A1AA',
   textInverse: '#1C1C1E',
-  border: '#2C2C2E',
+  border: '#E5E7EB',
   borderLight: '#1C1C1E',
   danger: '#F87171',
   dangerLight: '#7F1D1D',
