@@ -9,14 +9,14 @@ import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '../hooks/useTheme';
 
 // Screens & Stacks
-import MenuScreen from '../screens/menu/MenuScreen';
+import DashboardScreen from '../screens/dashboard/DashboardScreen';
 import VehiclesStack from './VehiclesStack';
 import MaintenancesStack from './MaintenancesStack';
 import SettingsScreen from '../screens/settings/SettingsScreen';
 import DestinationsStack from './DestinationsStack';
 
 export type TabParamList = {
-  Menu: undefined;
+  Dashboard: undefined;
   Vehicles: undefined;
   Maintenance: undefined;
   Destinations: undefined;
@@ -48,10 +48,10 @@ export default function TabNavigator() {
       }}
     >
       <Tab.Screen 
-        name="Menu" 
-        component={MenuScreen}
+        name="Dashboard" 
+        component={DashboardScreen}
         options={{
-          tabBarLabel: 'Menu',
+          tabBarLabel: 'Dashboard',
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="home" size={size} color={color} />
           ),

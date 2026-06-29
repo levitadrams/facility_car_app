@@ -21,7 +21,7 @@ export const authConfig = {
    *   - Entregadores: 15 minutos
    *   - Administradores: 60 minutos
    */
-  inactivityTimeout: 1 * 60 * 1000, // 30 minutos
+  inactivityTimeout: 15 * 60 * 1000, // 15 minutos
 
   /**
    * Tempo de expiração do token em cache (ms)
